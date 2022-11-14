@@ -40,6 +40,11 @@ public class GameInput {
         return ALPHABET.indexOf(s);
     }
 
+    public GameInput(int row, int col, ActionType action) {
+        this.row_idx = row;
+        this.col_idx = col;
+        this.action = action;
+    }
 
     public static GameInput parseInput(String rawInput) {
         String[] inputArr = rawInput.split(" ");

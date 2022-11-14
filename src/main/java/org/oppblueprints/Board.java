@@ -2,9 +2,9 @@ package org.oppblueprints;
 
 public class Board {
 
-    private String[] CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private final String[] CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
-    private Cell[][] board;
+    private final Cell[][] board;
 
     public Board(int x, int y) {
         this.board = new Cell[y][x];
@@ -37,9 +37,17 @@ public class Board {
         int mines = 0;
 
         for (int[] index : surroundingIndices) {
-            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board.length-1) continue;
+            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
             if (board[index[0]][index[1]].hasMine()) mines++;
         }
+
+        if (mines == 0) {
+            for (int[] index : surroundingIndices) {
+                if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
+                action(new GameInput(index[0], index[1], ActionType.Mine));
+            }
+        }
+
         return mines;
     }
 
@@ -57,7 +65,13 @@ public class Board {
 
             GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
             if (result.lost) return result;
-            this.board[input.getRow_idx()][input.getCol_idx()].setMineNumber(getSurroundingMines(input.getRow_idx(), input.getCol_idx()));
+
+            int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
+            this.board[input.getRow_idx()][input.getCol_idx()].setMineNumber(surroundingMines);
+
+
+
+
             return result;
 
 
