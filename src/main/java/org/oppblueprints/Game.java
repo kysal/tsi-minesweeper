@@ -33,21 +33,24 @@ public class Game {
             GameInput input = GameInput.parseInput(scanner.nextLine());
 
             if (input.isValid()) {
-                try {
-                    this.board.action(input);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("Input Error: Out of Bounds");
+                GameResult result = this.board.action(input);
+                if (result.error == ErrorType.None) {
+                    if (result.lost) {
+                        isGameRunning = false;
+                        System.out.println(this.board.printBoard());
+                        System.out.println("Mine detected! You lose!");
+                    }
+                } else {
+                    switch (result.error) {
+                        case InvalidIndex -> System.out.println("Input Error: Out of Bounds");
+                        case AlreadyCleared -> System.out.println("Input Error: Tile already cleared");
+                        default -> System.out.println("Error with message");
+                    }
                 }
-
+            } else {
+                System.out.println("Input Error: Invalid Syntax");
             }
-
-            System.out.println("Input Error: Invalid Syntax");
-
-
-
-            // System.out.println(input);
         }
-
     }
 
 

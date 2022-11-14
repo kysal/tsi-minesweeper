@@ -68,6 +68,17 @@ public class Cell {
         return new GameResult(false);
     }
 
+    public void flag() {
+        if (this.visualCellState == CellState.Flag)
+            this.visualCellState = CellState.Unmined;
+        else
+            this.visualCellState = CellState.Flag;
+    }
+
+    public boolean isFlagged() {
+        return this.visualCellState == CellState.Flag;
+    }
+
     public String getStateSymbol() {
         return switch (this.visualCellState) {
             case Unmined -> "██";

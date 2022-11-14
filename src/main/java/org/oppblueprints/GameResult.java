@@ -4,6 +4,7 @@ enum ErrorType {
     None,
     InvalidIndex,
     AlreadyCleared,
+    Flagged,
     Temp
 }
 
@@ -18,6 +19,7 @@ public class GameResult {
     }
 
     public GameResult(boolean lost) {
+        this.error = ErrorType.None;
         this.lost = lost;
     }
 
