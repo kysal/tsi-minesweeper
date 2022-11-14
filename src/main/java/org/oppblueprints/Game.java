@@ -30,8 +30,22 @@ public class Game {
             System.out.println("Next Input: ");
 
 
-            GameInput input = GameInput.parseInput(scanner.next());
-            System.out.println(input);
+            GameInput input = GameInput.parseInput(scanner.nextLine());
+
+            if (input.isValid()) {
+                try {
+                    this.board.action(input);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Input Error: Out of Bounds");
+                }
+
+            }
+
+            System.out.println("Input Error: Invalid Syntax");
+
+
+
+            // System.out.println(input);
         }
 
     }

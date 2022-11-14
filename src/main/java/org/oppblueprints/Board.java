@@ -13,12 +13,51 @@ public class Board {
                 this.board[row][col] = new Cell();
             }
         }
+
+        this.board[3][2] = new Cell(true);
+
     }
 
     private void generateBoard() {
 
     }
 
+    private int getSurroundingMines(int row, int col) {
+        int[][] surroundingIndices = {
+                {row+1, col  },
+                {row-1, col  },
+                {row  , col+1},
+                {row  , col-1},
+                {row+1, col+1},
+                {row+1, col-1},
+                {row-1, col+1},
+                {row-1, col-1}
+        };
+
+        int mines = 0;
+
+        for (int[] index : surroundingIndices) {
+            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board.length-1) continue;
+            if (board[index[0]][index[1]].hasMine()) mines++;
+        }
+        return mines;
+    }
+
+    public GameResult action(GameInput input) throws ArrayIndexOutOfBoundsException {
+
+        if (input.action == ActionType.Mine) {
+            if (this.board[input.getRow_idx()][input.getCol_idx()].hasMine()) {
+                // End game
+            } else {
+                this.board[input.getRow_idx()][input.getCol_idx()].setState(getSurroundingMines(input.getRow_idx(), input.getCol_idx()));
+            }
+
+        } else if (input.action == ActionType.Flag) {
+
+        }
+
+        return new GameResult();
+    }
 
     public String printBoard() {
         StringBuilder sb = new StringBuilder();

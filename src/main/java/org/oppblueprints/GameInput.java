@@ -1,5 +1,7 @@
 package org.oppblueprints;
 
+import java.util.Arrays;
+
 enum ActionType {
     Mine,
     Flag,
@@ -53,14 +55,13 @@ public class GameInput {
         });
         if (gi.getAction() == ActionType.Invalid) return new GameInput(false);
 
-        gi.row_idx = gi.getIndexOfChar(inputArr[1].replaceAll("[0-9]", "")) -1;
+
+        gi.row_idx = gi.getIndexOfChar(inputArr[1].replaceAll("[0-9]", "").toUpperCase());
         gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[A-z]", "")) -1;
 
         gi.valid = true;
 
         return gi;
-
-
     }
 
 

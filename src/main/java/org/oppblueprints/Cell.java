@@ -24,6 +24,10 @@ public class Cell {
         isMine = false;
     }
 
+    public Cell(boolean hasMine) {
+        isMine = hasMine;
+    }
+
     public boolean hasMine() {
         return isMine;
     }
@@ -34,6 +38,26 @@ public class Cell {
 
     public void setState(CellState state) {
         this.visualCellState = state;
+    }
+
+    public void setState(int mines) {
+        this.setState(switch (mines) {
+            case 0 -> CellState.MinedNone;
+            case 1 -> CellState.Mined1;
+            case 2 -> CellState.Mined2;
+            case 3 -> CellState.Mined3;
+            case 4 -> CellState.Mined4;
+            case 5 -> CellState.Mined5;
+            case 6 -> CellState.Mined6;
+            case 7 -> CellState.Mined7;
+            case 8 -> CellState.Mined8;
+            default -> CellState.Unmined;
+
+        });
+    }
+
+    public void reveal() {
+
     }
 
     public String getStateSymbol() {
@@ -48,6 +72,7 @@ public class Cell {
             case Mined6 -> "6 ";
             case Mined7 -> "7 ";
             case Mined8 -> "8 ";
+            case Mine -> "**";
             default -> "  ";
         };
     }
