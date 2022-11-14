@@ -17,6 +17,14 @@ public class Game {
 
     }
 
+    private void printHelpCommand() {
+        System.out.println("""
+                --- HELP ---
+                mine [ROW_LETTER][COL_NUMBER]: reveals tile at index
+                flag [ROW_LETTER][COL_NUMBER]: flags tile at index
+                """);
+    }
+
     public void play() {
         boolean isGameRunning = true;
         Scanner scanner = new Scanner(System.in);
@@ -29,8 +37,11 @@ public class Game {
             // Ask for input
             System.out.println("Next Input: ");
 
+            String scannerInput = scanner.nextLine();
 
-            GameInput input = GameInput.parseInput(scanner.nextLine());
+            if (scannerInput.toLowerCase().equals("help")) printHelpCommand();
+
+            GameInput input = GameInput.parseInput(scannerInput);
 
             if (input.isValid()) {
                 GameResult result = this.board.action(input);
