@@ -1,10 +1,52 @@
 package org.oppblueprints;
 
+import java.util.Random;
+
 public class Board {
 
     private final String[] CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     private final Cell[][] board;
+
+    private void addMines(int mines) {
+        Random random = new Random();
+
+        for (int i = 0; i < mines; i++) {
+            int row = random.nextInt(this.board.length);
+            int col = random.nextInt(this.board[0].length);
+
+            while (this.board[row][col] != null) {
+                if (col == this.board[0].length-1) {
+                    if (row == this.board.length-1) {
+                        row = 0;
+                    } else {
+                        row++;
+                    }
+                    col = 0;
+                } else {
+                    col++;
+                }
+            }
+
+
+            this.board[row][col] = new Cell(true);
+
+        }
+    }
+
+    public Board(Difficulty opts) {
+        this.board = new Cell[opts.getRows()][opts.getCols()];
+
+        addMines(opts.getMines());
+
+
+        for (int row = 0; row < this.board.length; row++) {
+            for (int col = 0; col < this.board[0].length; col++) {
+                if (this.board[row][col] == null) this.board[row][col] = new Cell();
+            }
+        }
+        System.out.println(mineCount());
+    }
 
     public Board(int x, int y) {
         this.board = new Cell[y][x];
@@ -109,6 +151,16 @@ public class Board {
 
     private String rowLine() {
         return "-" + "+--".repeat(Math.max(0, board[0].length + 1)) + "\n";
+    }
+
+    private int mineCount() {
+        int mines = 0;
+        for (int row = 0; row < this.board.length; row++) {
+            for (int col = 0; col < this.board[0].length; col++) {
+                if (this.board[row][col].hasMine()) mines++;
+            }
+        }
+        return mines;
     }
 
 

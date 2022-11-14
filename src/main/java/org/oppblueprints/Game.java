@@ -1,5 +1,6 @@
 package org.oppblueprints;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Game {
@@ -9,12 +10,8 @@ public class Game {
 
 
     public Game() {
-        this.board = new Board(10,8);
         this.score = 0;
         this.time = 0;
-
-        System.out.println(this.board.printBoard());
-
     }
 
     private void printHelpCommand() {
@@ -25,8 +22,10 @@ public class Game {
                 """);
     }
 
-    public void play() {
+    public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
+        board = new Board(difficulty);
+
         Scanner scanner = new Scanner(System.in);
 
         while (isGameRunning) {
@@ -64,11 +63,41 @@ public class Game {
         }
     }
 
+    public void start() {
+        Scanner scanner = new Scanner(System.in);
+        Difficulty difficulty = null;
+
+        while (difficulty == null) {
+            System.out.println("Choose a difficulty:\n(b)eginner\n(i)ntermediate\n(e)xpert\n(c)ustom");
+            String input = scanner.nextLine();
+
+            if (Objects.equals(input, "c") || Objects.equals(input, "custom")) {
+                System.out.print("Rows: ");
+                int rows = Integer.parseInt(scanner.nextLine());
+                System.out.print("Columns: ");
+                int cols = Integer.parseInt(scanner.nextLine());
+                System.out.print("Mines: ");
+                int mines = Integer.parseInt(scanner.nextLine());
+
+                difficulty = new Difficulty(rows, cols, mines);
+            }
+
+            difficulty = switch (input) {
+                case "b", "beginner" -> Difficulty.beginner();
+                case "i", "intermediate" -> Difficulty.intermediate();
+                case "e", "expert" -> Difficulty.expert();
+                default -> null;
+            };
+        }
+
+        play(difficulty);
+    }
+
 
     public static void main(String[] args) {
         Game game = new Game();
 
-        game.play();
+        game.start();
 
     }
 
