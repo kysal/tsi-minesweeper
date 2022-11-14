@@ -122,6 +122,7 @@ public class Board {
                 return new GameResult(ErrorType.AlreadyCleared);
 
             this.board[input.getRow_idx()][input.getCol_idx()].flag();
+
             return new GameResult(false);
         }
 
@@ -147,6 +148,15 @@ public class Board {
         }
 
         return sb.toString();
+    }
+
+    public boolean hasWon() {
+        for (Cell[] row : this.board) {
+            for (Cell cell: row) {
+                if (!cell.isFlaggedCorrectly()) return false;
+            }
+        }
+        return true;
     }
 
     private String rowLine() {

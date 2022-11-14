@@ -7,6 +7,7 @@ public class Game {
     Board board;
     int score;
     float time;
+    int flags_left;
 
 
     public Game() {
@@ -25,6 +26,7 @@ public class Game {
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
+        flags_left = difficulty.getMines();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -33,8 +35,11 @@ public class Game {
             // Print game state
             System.out.println(this.board.printBoard());
 
+            // Print flags left
+            System.out.println("Flags: " + flags_left);
+
             // Ask for input
-            System.out.println("Next Input: ");
+            System.out.print("Next Input: ");
 
             String scannerInput = scanner.nextLine();
 
@@ -49,6 +54,11 @@ public class Game {
                         isGameRunning = false;
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
+                    } else if (input.action == ActionType.Flag) {
+                        if(this.board.hasWon()) {
+                            isGameRunning = false;
+                            System.out.println("You win");
+                        }
                     }
                 } else {
                     switch (result.error) {

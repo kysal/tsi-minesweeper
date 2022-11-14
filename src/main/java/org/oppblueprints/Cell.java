@@ -79,6 +79,10 @@ public class Cell {
         return this.visualCellState == CellState.Flag;
     }
 
+    public boolean isFlaggedCorrectly() {
+        return (this.visualCellState == CellState.Flag && hasMine()) || (this.visualCellState != CellState.Flag && !hasMine());
+    }
+
     public String getStateSymbol() {
         return switch (this.visualCellState) {
             case Unmined -> "██";
