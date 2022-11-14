@@ -35,9 +35,9 @@ public class Board {
     }
 
     public Board(Difficulty opts) {
-        this.board = new Cell[opts.getRows()][opts.getCols()];
+        this.board = new Cell[opts.rows()][opts.cols()];
 
-        addMines(opts.getMines());
+        addMines(opts.mines());
 
 
         for (int row = 0; row < this.board.length; row++) {
@@ -121,9 +121,7 @@ public class Board {
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ErrorType.AlreadyCleared);
 
-            this.board[input.getRow_idx()][input.getCol_idx()].flag();
-
-            return new GameResult(false);
+            return this.board[input.getRow_idx()][input.getCol_idx()].flag();
         }
 
         return new GameResult(ErrorType.Temp);

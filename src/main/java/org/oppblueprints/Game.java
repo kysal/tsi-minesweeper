@@ -26,7 +26,7 @@ public class Game {
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
-        flags_left = difficulty.getMines();
+        flags_left = difficulty.mines();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -48,6 +48,10 @@ public class Game {
             GameInput input = GameInput.parseInput(scannerInput);
 
             if (input.isValid()) {
+                if (flags_left == 0 && input.action == ActionType.Flag) {
+                    System.out.println("No flags left");
+                    continue;
+                }
                 GameResult result = this.board.action(input);
                 if (result.error == ErrorType.None) {
                     if (result.lost) {
@@ -55,9 +59,15 @@ public class Game {
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
                     } else if (input.action == ActionType.Flag) {
-                        if(this.board.hasWon()) {
-                            isGameRunning = false;
-                            System.out.println("You win");
+
+                        if (result.isFlagPlaced()) flags_left--;
+                        else flags_left++;
+
+                        if (flags_left == 0) {
+                            if(this.board.hasWon()) {
+                                isGameRunning = false;
+                                System.out.println("You win");
+                            }
                         }
                     }
                 } else {

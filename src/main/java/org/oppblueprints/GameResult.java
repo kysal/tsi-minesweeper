@@ -13,6 +13,14 @@ public class GameResult {
 
     boolean lost;
 
+    private boolean flagPlaced;
+
+    public boolean isFlagPlaced() {
+        return flagPlaced;
+    }
+    public void setFlagPlaced(boolean flagPlaced) {
+        this.flagPlaced = flagPlaced;
+    }
 
     public GameResult(ErrorType error) {
         this.error = error;

@@ -68,11 +68,17 @@ public class Cell {
         return new GameResult(false);
     }
 
-    public void flag() {
-        if (this.visualCellState == CellState.Flag)
+    public GameResult flag() {
+        GameResult result = new GameResult(false);
+        if (this.visualCellState == CellState.Flag) {
             this.visualCellState = CellState.Unmined;
-        else
+            result.setFlagPlaced(false);
+        }
+        else {
             this.visualCellState = CellState.Flag;
+            result.setFlagPlaced(true);
+        }
+        return result;
     }
 
     public boolean isFlagged() {
