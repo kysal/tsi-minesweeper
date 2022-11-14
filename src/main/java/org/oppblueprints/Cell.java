@@ -19,6 +19,7 @@ public class Cell {
 
     private CellState visualCellState = CellState.Unmined;
     private boolean isMine;
+    private boolean isCleared = false;
 
     public Cell() {
         isMine = false;
@@ -32,6 +33,8 @@ public class Cell {
         return isMine;
     }
 
+    public boolean isCleared() {return isCleared;}
+
     public CellState getState() {
         return visualCellState;
     }
@@ -40,7 +43,7 @@ public class Cell {
         this.visualCellState = state;
     }
 
-    public void setState(int mines) {
+    public void setMineNumber(int mines) {
         this.setState(switch (mines) {
             case 0 -> CellState.MinedNone;
             case 1 -> CellState.Mined1;
@@ -56,8 +59,13 @@ public class Cell {
         });
     }
 
-    public void reveal() {
-
+    public GameResult reveal() {
+        isCleared = true;
+        if (isMine) {
+            this.visualCellState = CellState.Mine;
+            return new GameResult(true);
+        }
+        return new GameResult(false);
     }
 
     public String getStateSymbol() {

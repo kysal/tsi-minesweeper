@@ -45,18 +45,26 @@ public class Board {
 
     public GameResult action(GameInput input) throws ArrayIndexOutOfBoundsException {
 
+        if (input.getRow_idx() < 0 || input.getRow_idx() > this.board.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.board[0].length-1)
+            return new GameResult(ErrorType.InvalidIndex);
+
         if (input.action == ActionType.Mine) {
             if (this.board[input.getRow_idx()][input.getCol_idx()].hasMine()) {
                 // End game
+            } else if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared()) {
+                return new GameResult(ErrorType.AlreadyCleared);
             } else {
-                this.board[input.getRow_idx()][input.getCol_idx()].setState(getSurroundingMines(input.getRow_idx(), input.getCol_idx()));
+                GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
+                if (result.lost) return result;
+                this.board[input.getRow_idx()][input.getCol_idx()].setMineNumber(getSurroundingMines(input.getRow_idx(), input.getCol_idx()));
+                return result;
             }
 
         } else if (input.action == ActionType.Flag) {
 
         }
 
-        return new GameResult();
+        return new GameResult(ErrorType.Temp);
     }
 
     public String printBoard() {
