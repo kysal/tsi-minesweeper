@@ -81,7 +81,7 @@ public class GUI {
     }
 
     private void postActionGameUpdate(GameResult result) {
-        if (result.error == ErrorType.None) {
+        if (result.error == ResultErrorType.None) {
 
             if (result.lost) {
                 // DISPLAY BOX

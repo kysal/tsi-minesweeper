@@ -2,7 +2,7 @@ package org.oppblueprints;
 
 public class FlagResult extends GameResult{
 
-    public FlagResult(ErrorType error) {
+    public FlagResult(ResultErrorType error) {
         super(error);
     }
 }

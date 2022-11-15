@@ -1,20 +1,5 @@
 package org.oppblueprints;
 
-enum CellState {
-    Unmined,
-    MinedNone,
-    Mined1,
-    Mined2,
-    Mined3,
-    Mined4,
-    Mined5,
-    Mined6,
-    Mined7,
-    Mined8,
-    Flag,
-    Mine
-}
-
 public class Cell {
 
     private CellState visualCellState = CellState.Unmined;

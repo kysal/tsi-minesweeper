@@ -113,7 +113,7 @@ public class Board {
 
         // If input index out of bounds
         if (input.getRow_idx() < 0 || input.getRow_idx() > this.board.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.board[0].length-1)
-            return new GameResult(ErrorType.InvalidIndex);
+            return new GameResult(ResultErrorType.InvalidIndex);
 
         // Input open command
         if (input.action == ActionType.Open) {
@@ -126,11 +126,11 @@ public class Board {
 
             // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
-                return new GameResult(ErrorType.AlreadyCleared);
+                return new GameResult(ResultErrorType.AlreadyCleared);
 
             // Return Error if tile is flagged
             if (this.board[input.getRow_idx()][input.getCol_idx()].isFlagged())
-                return new GameResult(ErrorType.Flagged);
+                return new GameResult(ResultErrorType.Flagged);
 
             // Update visual and check if opened mine
             GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
@@ -146,14 +146,14 @@ public class Board {
         } else if (input.action == ActionType.Flag) {
             // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
-                return new GameResult(ErrorType.AlreadyCleared);
+                return new GameResult(ResultErrorType.AlreadyCleared);
 
             // Return game result from flag
             return this.board[input.getRow_idx()][input.getCol_idx()].flag();
         }
 
         // Return error if no action
-        return new GameResult(ErrorType.NoAction);
+        return new GameResult(ResultErrorType.NoAction);
     }
 
     private String getRowTitle(int index) {

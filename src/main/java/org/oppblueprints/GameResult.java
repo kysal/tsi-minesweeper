@@ -1,15 +1,7 @@
 package org.oppblueprints;
 
-enum ErrorType {
-    None,
-    InvalidIndex,
-    AlreadyCleared,
-    Flagged,
-    NoAction
-}
-
 public class GameResult {
-    ErrorType error;
+    ResultErrorType error;
     boolean lost;
     private boolean flagPlaced;
 
@@ -20,12 +12,12 @@ public class GameResult {
         this.flagPlaced = flagPlaced;
     }
 
-    public GameResult(ErrorType error) {
+    public GameResult(ResultErrorType error) {
         this.error = error;
     }
 
     public GameResult(boolean lost) {
-        this.error = ErrorType.None;
+        this.error = ResultErrorType.None;
         this.lost = lost;
     }
 

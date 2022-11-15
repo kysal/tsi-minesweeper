@@ -54,7 +54,7 @@ public class Game {
 
             if (input.hasNoError()) {
                 GameResult result = this.board.action(input);
-                if (result.error == ErrorType.None) {
+                if (result.error == ResultErrorType.None) {
                     if (result.lost) {
                         isGameRunning = false;
                         System.out.println(this.board.printBoard());

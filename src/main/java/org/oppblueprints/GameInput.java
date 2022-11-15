@@ -3,24 +3,6 @@ package org.oppblueprints;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-enum InputErrorType {
-    None,
-    CommandSyntax,
-    UnknownCommand,
-    RowIndexUndefined,
-    ColIndexUndefined,
-    UnknownChar,
-    ColIndexTooLarge,
-    RowIndexTooLarge
-
-}
-
-enum ActionType {
-    Open,
-    Flag,
-    Invalid
-}
-
 public class GameInput {
 
     private int row_idx;
