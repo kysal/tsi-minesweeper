@@ -86,7 +86,7 @@ public class Cell {
     }
 
     public boolean isFlaggedCorrectly() {
-        return (this.visualCellState == CellState.Flag && hasMine()) || (this.visualCellState != CellState.Flag && !hasMine());
+        return (hasMine()) || (isCleared && !hasMine());
     }
 
     public String getStateSymbol() {

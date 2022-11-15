@@ -69,12 +69,10 @@ public class Game {
 
                         if (result.isFlagPlaced()) flags_left--;
                         else flags_left++;
-
-                        if (flags_left == 0) {
-                            if(this.board.hasWon()) {
-                                isGameRunning = false;
-                                System.out.println("You win");
-                            }
+                    } else {
+                        if(this.board.hasWon()) {
+                            isGameRunning = false;
+                            System.out.println("You win");
                         }
                     }
                 } else {

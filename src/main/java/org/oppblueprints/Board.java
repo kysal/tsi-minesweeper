@@ -216,6 +216,10 @@ public class Board {
         return mines;
     }
 
+    public String getCellSymbol(int row, int col) {
+        return board[row][col].getStateSymbol();
+    }
+
 
 
 }
