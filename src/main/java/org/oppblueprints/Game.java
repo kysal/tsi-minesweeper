@@ -108,7 +108,7 @@ public class Game {
 
                 if (mines < rows * cols - 9) {
                     difficulty = new Difficulty(rows, cols, mines);
-                    play(difficulty);
+                    //play(difficulty);
                 } else {
                     System.out.println("Too many mines to fit at current board size");
                 }
@@ -119,9 +119,21 @@ public class Game {
                     case "e", "expert" -> Difficulty.expert();
                     default -> null;
                 };
-                play(difficulty);
+                //play(difficulty);
             }
         }
+
+        System.out.print("(C)ommand Line or (G)UI: ");
+        String displayTypeInput = scanner.nextLine().toUpperCase();
+
+        if(displayTypeInput.equals("C") || displayTypeInput.equals("COMMAND LINE") || displayTypeInput.equals("COMMAND")) {
+            play(difficulty);
+        } else if (displayTypeInput.equals("G") || displayTypeInput.equals("GUI")) {
+            GUI gui = new GUI(difficulty);
+        }
+
+
+
     }
 
 
