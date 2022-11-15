@@ -7,6 +7,8 @@ public class Board {
     private final String[] CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     private final Cell[][] board;
+    private final Difficulty difficulty;
+    private boolean initialised;
 
     private void addMines(int mines) {
         Random random = new Random();
@@ -34,18 +36,48 @@ public class Board {
         }
     }
 
-    public Board(Difficulty opts) {
-        this.board = new Cell[opts.rows()][opts.cols()];
+    private void generateBoard(int firstMoveRow, int firstMoveCol) {
+        // Make first move an empty
+        int[][] surroundingIndices = {
+                {firstMoveRow  , firstMoveCol  },
+                {firstMoveRow+1, firstMoveCol  },
+                {firstMoveRow-1, firstMoveCol  },
+                {firstMoveRow  , firstMoveCol+1},
+                {firstMoveRow  , firstMoveCol-1},
+                {firstMoveRow+1, firstMoveCol+1},
+                {firstMoveRow+1, firstMoveCol-1},
+                {firstMoveRow-1, firstMoveCol+1},
+                {firstMoveRow-1, firstMoveCol-1}
+        };
+        for (int[] index: surroundingIndices) {
+            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
+            board[index[0]][index[1]] = new Cell(false);
+        }
 
-        addMines(opts.mines());
+        // Add mines
+        addMines(difficulty.mines());
 
-
+        // Fill all remaining squares
         for (int row = 0; row < this.board.length; row++) {
             for (int col = 0; col < this.board[0].length; col++) {
                 if (this.board[row][col] == null) this.board[row][col] = new Cell();
             }
         }
-        System.out.println(mineCount());
+
+    }
+
+    public Board(Difficulty opts) {
+        this.board = new Cell[opts.rows()][opts.cols()];
+        this.difficulty = opts;
+        this.initialised = false;
+//        addMines(opts.mines());
+//
+//
+//        for (int row = 0; row < this.board.length; row++) {
+//            for (int col = 0; col < this.board[0].length; col++) {
+//                if (this.board[row][col] == null) this.board[row][col] = new Cell();
+//            }
+//        }
     }
 
     private int getSurroundingMines(int row, int col) {
@@ -85,6 +117,12 @@ public class Board {
 
         // Input open command
         if (input.action == ActionType.Open) {
+
+            // Init board before first action
+            if (!initialised) {
+                generateBoard(input.getRow_idx(), input.getCol_idx());
+                initialised = true;
+            }
 
             // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
@@ -137,9 +175,17 @@ public class Board {
             // Row title
             sb.append(getRowTitle(row)).append("|");
             // Cell states
-            for (int col = 0; col < board[0].length; col++) {
-                sb.append(board[row][col].getStateSymbol()).append("|");
+
+            if (initialised) {
+                for (int col = 0; col < board[0].length; col++) {
+                    sb.append(board[row][col].getStateSymbol()).append("|");
+                }
+            } else {
+                for (int col = 0; col < board[0].length; col++) {
+                    sb.append("██").append("|");
+                }
             }
+
             sb.append(" \n");
             sb.append(rowLine());
         }

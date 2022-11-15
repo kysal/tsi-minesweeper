@@ -93,6 +93,7 @@ public class Cell {
         return switch (this.visualCellState) {
             case Unmined -> "██";
             case Flag -> "⚐ ";
+            case MinedNone -> "  ";
             case Mined1 -> "1 ";
             case Mined2 -> "2 ";
             case Mined3 -> "3 ";
@@ -102,7 +103,7 @@ public class Cell {
             case Mined7 -> "7 ";
             case Mined8 -> "8 ";
             case Mine -> "**";
-            default -> "  ";
+            default -> "??";
         };
     }
 

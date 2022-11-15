@@ -90,7 +90,11 @@ public class GameInput {
         return col_idx;
     }
 
-    public InputErrorType getError() {
+    public boolean hasNoError() {
+        return error == InputErrorType.None;
+    }
+
+    private InputErrorType getError() {
         return error;
     }
 

@@ -23,12 +23,6 @@ public class Game {
                 """);
     }
 
-    private void CheckEnvironmentValidity(GameInput input) {
-        if (input.action == ActionType.Flag && flags_left <= 0) {
-            input.setError(InputErrorType.NoFlagsLeft);
-        }
-    }
-
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
@@ -54,21 +48,17 @@ public class Game {
                 continue;
             };
 
-
+            // Convert scanner string to input object
             GameInput input = GameInput.parseInput(scannerInput);
 
-            if (input.getError() == InputErrorType.None) {
-                CheckEnvironmentValidity(input);
 
+            if (input.hasNoError()) {
+//                if (flags_left == 0 && input.action == ActionType.Flag) {
+//                    System.out.println("No flags left");
+//                    continue;
+//                }
 
-            }
-
-
-            if (input.isValid()) {
-                if (flags_left == 0 && input.action == ActionType.Flag) {
-                    System.out.println("No flags left");
-                    continue;
-                }
+                // Attempt to apply input to game board
                 GameResult result = this.board.action(input);
                 if (result.error == ErrorType.None) {
                     if (result.lost) {
@@ -116,8 +106,12 @@ public class Game {
                 System.out.print("Mines: ");
                 int mines = Integer.parseInt(scanner.nextLine());
 
-                difficulty = new Difficulty(rows, cols, mines);
-                play(difficulty);
+                if (mines < rows * cols - 9) {
+                    difficulty = new Difficulty(rows, cols, mines);
+                    play(difficulty);
+                } else {
+                    System.out.println("Too many mines to fit at current board size");
+                }
             } else {
                 difficulty = switch (input) {
                     case "b", "beginner" -> Difficulty.beginner();
