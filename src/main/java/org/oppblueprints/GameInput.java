@@ -1,13 +1,17 @@
 package org.oppblueprints;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 enum InputErrorType {
     None,
     CommandSyntax,
     UnknownCommand,
-    NoFlagsLeft,
     RowIndexUndefined,
     ColIndexUndefined,
-    UnknownChar
+    UnknownChar,
+    ColIndexTooLarge,
+    RowIndexTooLarge
 
 }
 
@@ -63,15 +67,19 @@ public class GameInput {
         // If unknown command return error
         if (gi.getAction() == ActionType.Invalid) return new GameInput(InputErrorType.UnknownCommand);
         // If special chars used return error
-        // IF TIME DO PATTERN MATCHING
+        Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
+        Matcher matcher = pattern.matcher(inputArr[1]);
+        if (matcher.find()) return new GameInput(InputErrorType.UnknownChar);
 
         // If option contains no alphabet chars return error
         if (inputArr[1].replaceAll("[^A-Za-z]", "").equals("")) return new GameInput(InputErrorType.RowIndexUndefined);
-        // Parse letter to row index value
+        if (inputArr[1].replaceAll("[^A-Za-z]", "").length() > 6) return new GameInput(InputErrorType.RowIndexTooLarge);
+            // Parse letter to row index value
         gi.row_idx = GameInput.parseLetterIndex((inputArr[1].replaceAll("[^A-Za-z]", "")));
 
         // If option contains no numbers return error
         if (inputArr[1].replaceAll("[^0-9]", "").equals("")) return new GameInput(InputErrorType.ColIndexUndefined);
+        if (inputArr[1].replaceAll("[^0-9]", "").length() > 9) return new GameInput(InputErrorType.ColIndexTooLarge);
         // Parse number to row index
         gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[^0-9]", "")) -1;
 
@@ -94,11 +102,7 @@ public class GameInput {
         return error == InputErrorType.None;
     }
 
-    private InputErrorType getError() {
+    public InputErrorType getError() {
         return error;
-    }
-
-    public void setError(InputErrorType error) {
-        this.error = error;
     }
 }

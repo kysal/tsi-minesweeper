@@ -46,19 +46,13 @@ public class Game {
             if (scannerInput.equalsIgnoreCase("help")) {
                 printHelpCommand();
                 continue;
-            };
+            }
 
             // Convert scanner string to input object
             GameInput input = GameInput.parseInput(scannerInput);
 
 
             if (input.hasNoError()) {
-//                if (flags_left == 0 && input.action == ActionType.Flag) {
-//                    System.out.println("No flags left");
-//                    continue;
-//                }
-
-                // Attempt to apply input to game board
                 GameResult result = this.board.action(input);
                 if (result.error == ErrorType.None) {
                     if (result.lost) {
@@ -83,7 +77,13 @@ public class Game {
                     }
                 }
             } else {
-                System.out.println("Input Error: Invalid Syntax");
+                switch (input.getError()) {
+                    case UnknownChar -> System.out.println("Input Error: An unexpected character was found in input");
+                    case CommandSyntax -> System.out.println("Input Error: Error in command syntax. Try 'help'");
+                    case RowIndexUndefined -> System.out.println("Input Error: Your input contained no alphabet characters and thus row could not be determined");
+                    case ColIndexUndefined -> System.out.println("Input Error: Your input contained no number characters and thus column could not be determined");
+                    default -> System.out.println("Input Error: Error without message: " + input.getError());
+                }
             }
         }
     }
@@ -129,9 +129,6 @@ public class Game {
         } else if (displayTypeInput.equals("G") || displayTypeInput.equals("GUI")) {
             GUI gui = new GUI(difficulty);
         }
-
-
-
     }
 
 

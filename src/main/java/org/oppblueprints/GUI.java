@@ -2,8 +2,6 @@ package org.oppblueprints;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GUI {
     JFrame frame;
@@ -42,12 +40,9 @@ public class GUI {
         for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
             for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
                 JButton button = new JButton(" ");
-                int finalRow_idx = row_idx;
-                int finalCol_idx = col_idx;
+                int row = row_idx;
+                int col = col_idx;
                 button.addActionListener(e -> {
-                    int row = finalRow_idx;
-                    int col = finalCol_idx;
-
                     System.out.println("Index: " + row + " " + col + " Mode: " + actionMode);
                     GameInput input = new GameInput(row, col, actionMode);
                     postActionGameUpdate(board.action(input));
