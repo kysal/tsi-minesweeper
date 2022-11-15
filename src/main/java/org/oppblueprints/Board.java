@@ -48,22 +48,6 @@ public class Board {
         System.out.println(mineCount());
     }
 
-    public Board(int x, int y) {
-        this.board = new Cell[y][x];
-        for (int row = 0; row < this.board.length; row++) {
-            for (int col = 0; col < this.board[0].length; col++) {
-                this.board[row][col] = new Cell();
-            }
-        }
-
-        this.board[3][2] = new Cell(true);
-
-    }
-
-    private void generateBoard() {
-
-    }
-
     private int getSurroundingMines(int row, int col) {
         int[][] surroundingIndices = {
                 {row+1, col  },
@@ -86,7 +70,7 @@ public class Board {
         if (mines == 0) {
             for (int[] index : surroundingIndices) {
                 if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
-                action(new GameInput(index[0], index[1], ActionType.Mine));
+                action(new GameInput(index[0], index[1], ActionType.Open));
             }
         }
 
@@ -95,41 +79,54 @@ public class Board {
 
     public GameResult action(GameInput input) {
 
+        // If input index out of bounds
         if (input.getRow_idx() < 0 || input.getRow_idx() > this.board.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.board[0].length-1)
             return new GameResult(ErrorType.InvalidIndex);
 
-        if (input.action == ActionType.Mine) {
+        // Input open command
+        if (input.action == ActionType.Open) {
+
+            // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ErrorType.AlreadyCleared);
 
+            // Return Error if tile is flagged
             if (this.board[input.getRow_idx()][input.getCol_idx()].isFlagged())
                 return new GameResult(ErrorType.Flagged);
 
+            // Update visual and check if opened mine
             GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
             if (result.lost) return result;
 
+            // If not mine, check surrounding tiles for mines to produce tile number
             int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
             this.board[input.getRow_idx()][input.getCol_idx()].setMineNumber(surroundingMines);
 
-
-
-
             return result;
 
-
+        // Input flag command
         } else if (input.action == ActionType.Flag) {
+            // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ErrorType.AlreadyCleared);
 
+            // Return game result from flag
             return this.board[input.getRow_idx()][input.getCol_idx()].flag();
         }
 
-        return new GameResult(ErrorType.Temp);
+        // Return error if no action
+        return new GameResult(ErrorType.NoAction);
+    }
+
+    private String getRowTitle(int index) {
+        String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return index < 0 ? "" : getRowTitle((index / 26) - 1) + (char)(65 + index %26);
     }
 
     public String printBoard() {
         StringBuilder sb = new StringBuilder();
 
+        // Top column
         sb.append(" |");
         for (int col = 0; col < board[0].length; col++) {
             sb.append(String.format("%1$2s", col+1)).append("|");
@@ -137,7 +134,9 @@ public class Board {
         sb.append(" \n").append(rowLine());
 
         for (int row = 0; row < board.length; row++) {
-            sb.append(CHARS[row]).append("|");
+            // Row title
+            sb.append(getRowTitle(row)).append("|");
+            // Cell states
             for (int col = 0; col < board[0].length; col++) {
                 sb.append(board[row][col].getStateSymbol()).append("|");
             }

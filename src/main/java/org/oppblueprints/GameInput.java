@@ -1,9 +1,15 @@
 package org.oppblueprints;
 
-import java.util.Arrays;
+enum InputErrorType {
+    None,
+    CommandSyntax,
+    UnknownCommand,
+    NoFlagsLeft
+
+}
 
 enum ActionType {
-    Mine,
+    Open,
     Flag,
     Invalid
 }
@@ -16,10 +22,15 @@ public class GameInput {
     private int col_idx;
     ActionType action;
     boolean valid;
+    private InputErrorType error;
 
     // THINK OF BETTER WAY TO RETURN INVALID INPUT
     private GameInput(boolean valid) {
         this.valid = valid;
+    }
+
+    private GameInput(InputErrorType error) {
+        this.error = error;
     }
 
     private GameInput() {
@@ -46,23 +57,43 @@ public class GameInput {
         this.action = action;
     }
 
+    public static int parseLetterIndex(String rawString) {
+        String ALPHABET = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int index = 0;
+        for (char c : rawString.toUpperCase().toCharArray()) {
+            index = index * 26 + ALPHABET.indexOf(c);
+        }
+        return index-1;
+    }
+
     public static GameInput parseInput(String rawInput) {
         String[] inputArr = rawInput.split(" ");
-        if (inputArr.length != 2) return new GameInput(false);
+        if (inputArr.length != 2) return new GameInput(InputErrorType.CommandSyntax);
 
         GameInput gi = new GameInput();
 
         // Set action
         gi.setAction(switch (inputArr[0].toLowerCase()) {
-            case "mine", "m" -> ActionType.Mine;
+            case "open", "o" -> ActionType.Open;
             case "flag", "f" -> ActionType.Flag;
             default -> ActionType.Invalid;
         });
-        if (gi.getAction() == ActionType.Invalid) return new GameInput(false);
+        if (gi.getAction() == ActionType.Invalid) return new GameInput(InputErrorType.UnknownCommand);
 
 
-        gi.row_idx = gi.getIndexOfChar(inputArr[1].replaceAll("[0-9]", "").toUpperCase());
-        gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[A-z]", "")) -1;
+        System.out.println("Chars: " + inputArr[1].replaceAll("[^A-Za-z]", ""));
+
+        gi.row_idx = GameInput.parseLetterIndex((inputArr[1].replaceAll("[^A-Za-z]", "")));
+
+        //gi.row_idx = gi.getIndexOfChar(inputArr[1].replaceAll("[^A-Za-z]", "").toUpperCase());
+
+
+        gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[^0-9]", "")) -1;
+
+
+        gi.error = InputErrorType.None;
+
+        System.out.println(gi);
 
         gi.valid = true;
 
@@ -91,17 +122,15 @@ public class GameInput {
         return row_idx;
     }
 
-    public void setRow_idx(int row_idx) {
-        this.row_idx = row_idx;
-    }
-
     public int getCol_idx() {
         return col_idx;
     }
 
-    public void setCol_idx(int col_idx) {
-        this.col_idx = col_idx;
+    public InputErrorType getError() {
+        return error;
     }
 
-
+    public void setError(InputErrorType error) {
+        this.error = error;
+    }
 }

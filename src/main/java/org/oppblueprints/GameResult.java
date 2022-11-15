@@ -5,14 +5,12 @@ enum ErrorType {
     InvalidIndex,
     AlreadyCleared,
     Flagged,
-    Temp
+    NoAction
 }
 
 public class GameResult {
     ErrorType error;
-
     boolean lost;
-
     private boolean flagPlaced;
 
     public boolean isFlagPlaced() {

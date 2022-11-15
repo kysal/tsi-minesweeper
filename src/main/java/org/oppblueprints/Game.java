@@ -23,6 +23,12 @@ public class Game {
                 """);
     }
 
+    private void CheckEnvironmentValidity(GameInput input) {
+        if (input.action == ActionType.Flag && flags_left <= 0) {
+            input.setError(InputErrorType.NoFlagsLeft);
+        }
+    }
+
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
@@ -40,12 +46,23 @@ public class Game {
 
             // Ask for input
             System.out.print("Next Input: ");
-
             String scannerInput = scanner.nextLine();
 
-            if (scannerInput.toLowerCase().equals("help")) printHelpCommand();
+            // Print help text
+            if (scannerInput.equalsIgnoreCase("help")) {
+                printHelpCommand();
+                continue;
+            };
+
 
             GameInput input = GameInput.parseInput(scannerInput);
+
+            if (input.getError() == InputErrorType.None) {
+                CheckEnvironmentValidity(input);
+
+
+            }
+
 
             if (input.isValid()) {
                 if (flags_left == 0 && input.action == ActionType.Flag) {
@@ -100,17 +117,17 @@ public class Game {
                 int mines = Integer.parseInt(scanner.nextLine());
 
                 difficulty = new Difficulty(rows, cols, mines);
+                play(difficulty);
+            } else {
+                difficulty = switch (input) {
+                    case "b", "beginner" -> Difficulty.beginner();
+                    case "i", "intermediate" -> Difficulty.intermediate();
+                    case "e", "expert" -> Difficulty.expert();
+                    default -> null;
+                };
+                play(difficulty);
             }
-
-            difficulty = switch (input) {
-                case "b", "beginner" -> Difficulty.beginner();
-                case "i", "intermediate" -> Difficulty.intermediate();
-                case "e", "expert" -> Difficulty.expert();
-                default -> null;
-            };
         }
-
-        play(difficulty);
     }
 
 
