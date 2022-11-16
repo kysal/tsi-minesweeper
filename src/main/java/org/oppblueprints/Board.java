@@ -102,6 +102,7 @@ public class Board {
         if (mines == 0) {
             for (int[] index : surroundingIndices) {
                 if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
+                if (board[index[0]][index[1]].isCleared()) continue;
                 action(new GameInput(index[0], index[1], ActionType.Open));
             }
         }
@@ -134,7 +135,7 @@ public class Board {
 
             // Update visual and check if opened mine
             GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
-            if (result.lost) return result;
+            if (result.lost) { revealAllMines(); return result;}
 
             // If not mine, check surrounding tiles for mines to produce tile number
             int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
@@ -218,6 +219,16 @@ public class Board {
 
     public String getCellSymbol(int row, int col) {
         return board[row][col].getStateSymbol();
+    }
+
+    public CellState getCellState(int row, int col) { return board[row][col].getState(); }
+
+    public void revealAllMines() {
+        for (Cell[] row : board) {
+            for (Cell cell : row) {
+                if (cell.hasMine()) cell.reveal();
+            }
+        }
     }
 
 

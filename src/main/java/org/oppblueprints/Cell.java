@@ -3,7 +3,7 @@ package org.oppblueprints;
 public class Cell {
 
     private CellState visualCellState = CellState.Unmined;
-    private boolean isMine;
+    private final boolean isMine;
     private boolean isCleared = false;
 
     public Cell() {
