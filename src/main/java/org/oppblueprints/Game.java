@@ -8,10 +8,15 @@ public class Game {
     int flagsLeft;
     int cellsToOpen;
 
+    /**
+     * Default constructor, doesn't initialise anything. Use .start() to initialise.
+     */
     public Game() {
     }
 
-    // Logs command syntax help to console
+    /**
+     * Logs command syntax help to console
+     */
     private void printHelpCommand() {
         System.out.println("""
                 --- HELP ---
@@ -20,7 +25,10 @@ public class Game {
                 """);
     }
 
-    // Asks for and handles each turn of the user's input
+    /**
+     * Asks for and handles each turn of the user's input.
+     * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
+     */
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
@@ -87,7 +95,9 @@ public class Game {
         }
     }
 
-    // Initialises the initial values of the game
+    /**
+     * Initialises the initial values of the game.
+     */
     public void start() {
         Scanner scanner = new Scanner(System.in);
         Difficulty difficulty = null;

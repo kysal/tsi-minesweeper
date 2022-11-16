@@ -8,8 +8,10 @@ public class Board {
     private final Difficulty difficulty;
     private boolean initialised;
 
-    // Places a given number of cells into board as mines
-    // Input is number of mines to be placed
+    /**
+     * Places a given number of cells into board as mines.
+     * @param mines number of mines to be placed.
+     */
     private void addMines(int mines) {
         Random random = new Random();
 
@@ -31,8 +33,11 @@ public class Board {
         }
     }
 
-    // Fills Board Cell[][] with Cell objects
-    // Inputs are co-ordinates of first move
+    /**
+     * Fills board Cell[][] with Cell objects.
+     * @param firstMoveRow Row index of the first move.
+     * @param firstMoveCol Column index of the first move.
+     */
     private void generateBoard(int firstMoveRow, int firstMoveCol) {
         // Make first move an empty
         int[][] surroundingIndices = {
@@ -63,14 +68,23 @@ public class Board {
 
     }
 
-    // CONSTRUCTOR
-    // NOTE: All cells should be null on construction, board filled during first move
+    /**
+     * Default constructor.
+     * Note: All cells should be null on construction, board filled during first move.
+     * @param opts The Difficulty record params containing the desired rows, columns and number of mines of the board.
+     */
     public Board(Difficulty opts) {
         this.board = new Cell[opts.rows()][opts.cols()];
         this.difficulty = opts;
         this.initialised = false;
     }
 
+    /**
+     * Returns the number of tiles opened during a recursive opening when the mine number is 0.
+     * @param row Row index of the players move.
+     * @param col Column index of the player move.
+     * @return The number of tiles opened during recursive opening.
+     */
     private int autoOpen(int row, int col) {
         int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};
         int tilesOpened = 0;
@@ -83,7 +97,12 @@ public class Board {
         return tilesOpened;
     }
 
-    // Returns the number of mines in the 8 surrounding tiles of a select tile index
+    /**
+     * Returns the number of mines in the 8 surrounding tiles of a select tile index.
+     * @param row Row index of the players move.
+     * @param col Column index of the player move.
+     * @return Number of mines in the 8 surrounding tiles.
+     */
     private int getSurroundingMines(int row, int col) {
         int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};
         int mines = 0;
@@ -94,8 +113,11 @@ public class Board {
         return mines;
     }
 
-    // Performs the input action on the board
-    // Returns GameResult informing success and win/loss state
+    /**
+     * Performs the input action on the board.
+     * @param input An GameInput object containing the game action desired and the row and col index where it should happen.
+     * @return GameResult informing success and win/loss state.
+     */
     public GameResult action(GameInput input) {
 
         // If input index out of bounds
@@ -122,7 +144,7 @@ public class Board {
             GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
 
             if (result.isGameLost()) { revealAllMines(); return result;}
-            result.setWon(hasWon());
+//            result.setWon(hasWon());
 
             // If not mine, check surrounding tiles for mines to produce tile number
             int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
@@ -155,7 +177,11 @@ public class Board {
         return new GameResult(ResultErrorType.NoAction);
     }
 
-    // Takes in a row index and returns row title A = 0; B = 1; AA = 27; AB = 28;
+    /**
+     * Takes in a row index and returns row title Eg. A = 0; B = 1; AA = 27; AB = 28;
+     * @param index The number to convert into an alphabetic char string
+     * @return The char string corresponding to the index number
+     */
     private String getRowTitle(int index) {
         return index < 0 ? "" : getRowTitle((index / 26) - 1) + (char)(65 + index %26);
     }
@@ -196,20 +222,18 @@ public class Board {
         return sb.toString();
     }
 
-    private boolean hasWon() {
-        for (Cell[] row : this.board) {
-            for (Cell cell: row) {
-                if (!cell.isFlaggedCorrectly()) return false;
-            }
-        }
-        return true;
-    }
-
+    /**
+     * Generates a representation of a full line for the board table printBoard() method.
+     * @return A line of appropriate length to the number of columns.
+     */
     private String rowLine() {
         return "-" + "+--".repeat(Math.max(0, board[0].length + 1)) + "\n";
     }
 
-    // DEBUG: Checks total number of mines in board
+    /**
+     * DEBUG: Checks total number of mines in board.
+     * @return The number of mines on the board.
+     */
     private int mineCount() {
         int mines = 0;
         for (int row = 0; row < this.board.length; row++) {
@@ -220,13 +244,27 @@ public class Board {
         return mines;
     }
 
+    /**
+     * Returns the visual cell state icon of a particular cell on the board.
+     * @param row Input row index.
+     * @param col Input row index.
+     * @return The visual state icon of the cell at row col.
+     */
     public String getCellSymbol(int row, int col) {
         return board[row][col].getStateSymbol();
     }
 
+    /**
+     * Returns the cell state of a particular cell on the board.
+     * @param row Input row index.
+     * @param col Input row index.
+     * @return The state of the cell at row col.
+     */
     public CellState getCellState(int row, int col) { return board[row][col].getState(); }
 
-    // Called when game is lost, displays all mines as opened
+    /**
+     * Called when game is lost, displays all mines as opened
+     */
     public void revealAllMines() {
         for (Cell[] row : board) {
             for (Cell cell : row) {
