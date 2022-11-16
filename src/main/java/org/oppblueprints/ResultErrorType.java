@@ -5,5 +5,6 @@ public enum ResultErrorType {
     InvalidIndex,
     AlreadyCleared,
     Flagged,
-    NoAction
+    NoAction,
+    FlagFirstMove,
 }

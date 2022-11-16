@@ -1,7 +1,7 @@
 package org.oppblueprints;
 
 public class GameResult {
-    ResultErrorType error;
+    private ResultErrorType error;
     boolean lost;
     private boolean flagPlaced;
 
@@ -21,4 +21,7 @@ public class GameResult {
         this.lost = lost;
     }
 
+    public ResultErrorType getError() {
+        return error;
+    }
 }

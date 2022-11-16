@@ -54,7 +54,7 @@ public class Game {
 
             if (input.hasNoError()) {
                 GameResult result = this.board.action(input);
-                if (result.error == ResultErrorType.None) {
+                if (result.getError() == ResultErrorType.None) {
                     if (result.lost) {
                         isGameRunning = false;
                         System.out.println(this.board.printBoard());
@@ -70,10 +70,10 @@ public class Game {
                         }
                     }
                 } else {
-                    switch (result.error) {
+                    switch (result.getError()) {
                         case InvalidIndex -> System.out.println("Input Error: Out of Bounds");
                         case AlreadyCleared -> System.out.println("Input Error: Tile already cleared");
-                        default -> System.out.println("Error with message");
+                        default -> System.out.println("Result Error: Error with message: " + result.getError());
                     }
                 }
             } else {

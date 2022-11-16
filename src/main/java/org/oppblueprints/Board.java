@@ -145,6 +145,8 @@ public class Board {
 
         // Input flag command
         } else if (input.action == ActionType.Flag) {
+            if (!initialised) return new GameResult(ResultErrorType.FlagFirstMove);
+
             // Return Error if tile already opened
             if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ResultErrorType.AlreadyCleared);
