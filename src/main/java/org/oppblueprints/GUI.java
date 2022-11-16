@@ -13,6 +13,7 @@ public class GUI {
     int flags_left;
     boolean lost = false;
     JLabel infoBox = new JLabel("");
+    int cellsToOpen;
 
     public GUI(Difficulty difficulty) {
         board = new Board(difficulty);
@@ -23,6 +24,7 @@ public class GUI {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
         mainPanel.setLayout(new FlowLayout());
         this.difficulty = difficulty;
+        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,25 +95,17 @@ public class GUI {
     private void postActionGameUpdate(GameResult result) {
         if (result.getError() == ResultErrorType.None) {
 
-            if (result.lost) {
+            if (result.isGameLost()) {
                 // DISPLAY BOX
                 lost = true;
-//                disableGrid();
-//                JFrame lostFrame = new JFrame();
-//                lostFrame.add(new JLabel("You lost"));
-//                lostFrame.pack();
-//                lostFrame.setVisible(true);
                 infoBox.setText("You lose!");
             } else if (actionMode == ActionType.Flag) {
                 if (result.isFlagPlaced()) flags_left--;
                 else flags_left++;
             } else if (actionMode == ActionType.Open) {
-                if (board.hasWon()) {
+                cellsToOpen -= result.getTilesOpened();
+                if (cellsToOpen <= 0) {
                     disableGrid();
-//                    JFrame wonFrame = new JFrame();
-//                    wonFrame.add(new JLabel("You win!"));
-//                    wonFrame.pack();
-//                    wonFrame.setVisible(true);
                     infoBox.setText("You win!");
                 }
             }
@@ -146,5 +140,10 @@ public class GUI {
             }
         }
     }
+
+    public static void playGUI(Difficulty difficulty) {
+        new GUI(difficulty);
+    }
+
 
 }

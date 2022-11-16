@@ -5,38 +5,34 @@ import java.util.Scanner;
 
 public class Game {
     Board board;
-    int score;
-    float time;
-    int flags_left;
-
+    int flagsLeft;
+    int cellsToOpen;
 
     public Game() {
-        this.score = 0;
-        this.time = 0;
     }
 
+    // Logs command syntax help to console
     private void printHelpCommand() {
         System.out.println("""
                 --- HELP ---
-                mine [ROW_LETTER][COL_NUMBER]: reveals tile at index
+                open [ROW_LETTER][COL_NUMBER]: reveals tile at index
                 flag [ROW_LETTER][COL_NUMBER]: flags tile at index
                 """);
     }
 
+    // Asks for and handles each turn of the user's input
     public void play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
-        flags_left = difficulty.mines();
+        flagsLeft = difficulty.mines();
 
         Scanner scanner = new Scanner(System.in);
 
+        // Game started
         while (isGameRunning) {
-
             // Print game state
             System.out.println(this.board.printBoard());
-
-            // Print flags left
-            System.out.println("Flags: " + flags_left);
+            System.out.println("Flags: " + flagsLeft);
 
             // Ask for input
             System.out.print("Next Input: ");
@@ -51,25 +47,28 @@ public class Game {
             // Convert scanner string to input object
             GameInput input = GameInput.parseInput(scannerInput);
 
-
             if (input.hasNoError()) {
+                // Send input to board
                 GameResult result = this.board.action(input);
                 if (result.getError() == ResultErrorType.None) {
-                    if (result.lost) {
+                    if (result.isGameLost()) {
                         isGameRunning = false;
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
                     } else if (input.action == ActionType.Flag) {
-
-                        if (result.isFlagPlaced()) flags_left--;
-                        else flags_left++;
+                        // Change flag variable when action taken
+                        if (result.isFlagPlaced()) flagsLeft--;
+                        else flagsLeft++;
                     } else {
-                        if(this.board.hasWon()) {
+                        cellsToOpen -= result.getTilesOpened();
+                        if (cellsToOpen <= 0) {
                             isGameRunning = false;
                             System.out.println("You win");
                         }
+
                     }
                 } else {
+                    // Handles Input and output error messages received from GameResult
                     switch (result.getError()) {
                         case InvalidIndex -> System.out.println("Input Error: Out of Bounds");
                         case AlreadyCleared -> System.out.println("Input Error: Tile already cleared");
@@ -88,14 +87,17 @@ public class Game {
         }
     }
 
+    // Initialises the initial values of the game
     public void start() {
         Scanner scanner = new Scanner(System.in);
         Difficulty difficulty = null;
 
+        // Set difficulty of board
         while (difficulty == null) {
             System.out.println("Choose a difficulty:\n(b)eginner\n(i)ntermediate\n(e)xpert\n(c)ustom");
             String input = scanner.nextLine();
 
+            // Custom difficulty input definition
             if (Objects.equals(input, "c") || Objects.equals(input, "custom")) {
                 System.out.print("Rows: ");
                 int rows = Integer.parseInt(scanner.nextLine());
@@ -106,37 +108,37 @@ public class Game {
 
                 if (mines < rows * cols - 9) {
                     difficulty = new Difficulty(rows, cols, mines);
-                    //play(difficulty);
                 } else {
                     System.out.println("Too many mines to fit at current board size");
                 }
             } else {
+                // Choice of set difficulties outlined in Difficulty.java
                 difficulty = switch (input) {
                     case "b", "beginner" -> Difficulty.beginner();
                     case "i", "intermediate" -> Difficulty.intermediate();
                     case "e", "expert" -> Difficulty.expert();
                     default -> null;
                 };
-                //play(difficulty);
             }
         }
+        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
+        // Choice of interface
         System.out.print("(C)ommand Line or (G)UI: ");
         String displayTypeInput = scanner.nextLine().toUpperCase();
 
+        // CLI
         if(displayTypeInput.equals("C") || displayTypeInput.equals("COMMAND LINE") || displayTypeInput.equals("COMMAND")) {
             play(difficulty);
-        } else if (displayTypeInput.equals("G") || displayTypeInput.equals("GUI")) {
-            GUI gui = new GUI(difficulty);
+        }
+        // GUI
+        else if (displayTypeInput.equals("G") || displayTypeInput.equals("GUI")) {
+            GUI.playGUI(difficulty);
         }
     }
 
-
     public static void main(String[] args) {
         Game game = new Game();
-
         game.start();
-
     }
-
 }

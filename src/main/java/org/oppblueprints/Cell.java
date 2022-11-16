@@ -70,10 +70,18 @@ public class Cell {
         return this.visualCellState == CellState.Flag;
     }
 
+    /**
+     * Checks if a cell is in the correct state for a win
+     * @return True if the cell contains a mine or
+     */
     public boolean isFlaggedCorrectly() {
         return (hasMine()) || (isCleared && !hasMine());
     }
 
+    /**
+     * Returns the symbol associated with a given cell state the cell is.
+     * @return A string to be shown to visually represent this cell's state.
+     */
     public String getStateSymbol() {
         return switch (this.visualCellState) {
             case Unmined -> "██";
