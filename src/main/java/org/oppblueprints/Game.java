@@ -110,11 +110,19 @@ public class Game {
             // Custom difficulty input definition
             if (Objects.equals(input, "c") || Objects.equals(input, "custom")) {
                 System.out.print("Rows: ");
-                int rows = Integer.parseInt(scanner.nextLine());
+                String rowsString = scanner.nextLine();
+                if (rowsString.replaceAll("[^0-9]", "").equals("")) continue;
+                int rows = Integer.parseInt(rowsString.replaceAll("[^0-9]", ""));
+
                 System.out.print("Columns: ");
-                int cols = Integer.parseInt(scanner.nextLine());
+                String colsString = scanner.nextLine();
+                if (colsString.replaceAll("[^0-9]", "").equals("")) continue;
+                int cols = Integer.parseInt(colsString.replaceAll("[^0-9]", ""));
+
                 System.out.print("Mines: ");
-                int mines = Integer.parseInt(scanner.nextLine());
+                String minesString = scanner.nextLine();
+                if (minesString.replaceAll("[^0-9]", "").equals("")) continue;
+                int mines = Integer.parseInt(minesString.replaceAll("[^0-9]", ""));
 
                 if (mines < rows * cols - 9) {
                     difficulty = new Difficulty(rows, cols, mines);
