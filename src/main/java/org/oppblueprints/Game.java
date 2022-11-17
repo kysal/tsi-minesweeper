@@ -32,7 +32,7 @@ public class Game {
      * Asks for and handles each turn of the user's input.
      * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
      */
-    public void play(Difficulty difficulty) {
+    public boolean play(Difficulty difficulty) {
         boolean isGameRunning = true;
         board = new Board(difficulty);
         flagsLeft = difficulty.mines();
@@ -73,8 +73,12 @@ public class Game {
                 if (result.getError() == ResultErrorType.None) {
                     if (result.isGameLost()) {
                         isGameRunning = false;
+                        timer.purge();
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
+
+                        System.out.print("Play again? (Y/N): ");
+                        return scanner.nextLine().equalsIgnoreCase("Y");
                     } else if (input.action == ActionType.Flag) {
                         // Change flag variable when action taken
                         if (result.isFlagPlaced()) flagsLeft--;
@@ -82,8 +86,12 @@ public class Game {
                     } else {
                         cellsToOpen -= result.getTilesOpened();
                         if (cellsToOpen <= 0) {
+                            timer.purge();
                             isGameRunning = false;
                             System.out.println("You win");
+
+                            System.out.print("Play again? (Y/N): ");
+                            return scanner.nextLine().equalsIgnoreCase("Y");
                         }
 
                     }
@@ -105,6 +113,7 @@ public class Game {
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -159,7 +168,10 @@ public class Game {
 
         // CLI
         if(displayTypeInput.equals("C") || displayTypeInput.equals("COMMAND LINE") || displayTypeInput.equals("COMMAND")) {
-            play(difficulty);
+            boolean playAgain = true;
+            while (playAgain) {
+                playAgain = play(difficulty);
+            }
         }
         // GUI
         else if (displayTypeInput.equals("G") || displayTypeInput.equals("GUI")) {

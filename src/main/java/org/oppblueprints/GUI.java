@@ -32,15 +32,14 @@ public class GUI {
     private GUI(Difficulty difficulty) {
         board = new Board(difficulty);
         flags_left = difficulty.mines();
-
-
+        this.difficulty = difficulty;
+        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
         frame = new JFrame();
         mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
         mainPanel.setLayout(new FlowLayout());
-        this.difficulty = difficulty;
-        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
+
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,6 +122,23 @@ public class GUI {
         optionPanel.add(digModeSelector);
         optionPanel.add(flagModeSelector);
         optionPanel.add(modeDisplay);
+
+        JButton restartButton = new JButton("Restart");
+        restartButton.addActionListener(e -> {
+            board = new Board(difficulty);
+            flags_left = difficulty.mines();
+            cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
+            secondsPassed = 0;
+            timerActive = false;
+            for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
+                for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
+                    buttonGrid[row_idx][col_idx].setText("██");
+                    buttonGrid[row_idx][col_idx].setForeground(Color.BLACK);
+                }
+            }
+        });
+        optionPanel.add(restartButton);
+
         return optionPanel;
     }
 
