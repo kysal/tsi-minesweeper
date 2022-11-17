@@ -3,6 +3,10 @@ package org.oppblueprints;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * GUI extension class for the Game class for Minesweeper.
+ * When used handles basic game methods and variables in place of the command line functionality.
+ */
 public class GUI {
     JFrame frame;
     JPanel mainPanel;
@@ -15,7 +19,13 @@ public class GUI {
     JLabel infoBox = new JLabel("");
     int cellsToOpen;
 
-    public GUI(Difficulty difficulty) {
+    /**
+     * Default constructor. Initialises the GUI and game variables.
+     * Display options panel and minesweeper board.
+     * Game functionality similar to the Game.play() method.
+     * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
+     */
+    private GUI(Difficulty difficulty) {
         board = new Board(difficulty);
         flags_left = difficulty.mines();
 
@@ -48,7 +58,6 @@ public class GUI {
                 final int col = col_idx;
                 button.addActionListener(e -> {
                     if (!lost) {
-                        System.out.println("Index: " + row + " " + col + " Mode: " + actionMode);
                         GameInput input = new GameInput(row, col, actionMode);
                         postActionGameUpdate(board.action(input));
                     }
@@ -67,6 +76,10 @@ public class GUI {
 
     }
 
+    /**
+     * Constructs the options panel containing the change mode buttons and mode label.
+     * @return The JPanel options panel.
+     */
     private JPanel generateOptionsPanel() {
         JPanel optionPanel = new JPanel();
         optionPanel.setLayout(new FlowLayout());
@@ -92,6 +105,11 @@ public class GUI {
         return optionPanel;
     }
 
+    /**
+     * The actions taken place after a move has been taken.
+     * Contains result error checking, variable updates, and visual updates.
+     * @param result The GameResult object containing move aftermath information.
+     */
     private void postActionGameUpdate(GameResult result) {
         if (result.getError() == ResultErrorType.None) {
 
@@ -133,6 +151,9 @@ public class GUI {
         }
     }
 
+    /**
+     * Disables the minesweeper grid for when input is no longer necessary.
+     */
     private void disableGrid() {
         for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
             for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
@@ -141,6 +162,10 @@ public class GUI {
         }
     }
 
+    /**
+     * Sets up Minesweeper game and displays GUI to user
+     * @param difficulty The game difficulty containing the number of rows, columns and mines in the game.
+     */
     public static void playGUI(Difficulty difficulty) {
         new GUI(difficulty);
     }

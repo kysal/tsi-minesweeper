@@ -10,6 +10,10 @@ public class GameInput {
     ActionType action;
     private InputErrorType error;
 
+    /**
+     * Error constructor, an unfinished input to note that an error has taken place and must be handled.
+     * @param error The error type that has occurred.
+     */
     private GameInput(InputErrorType error) {
         this.error = error;
     }
@@ -19,13 +23,24 @@ public class GameInput {
         return "Action: " + action + "\nRow: " + row_idx + "\nCol: " + col_idx;
     }
 
+    /**
+     * Default constructor, assigns the basic attributes of a game move.
+     * @param row The row index where the action should happen.
+     * @param col The column index where the move should happen.
+     * @param action The action to take place at a given row column index.
+     */
     public GameInput(int row, int col, ActionType action) {
         this.row_idx = row;
         this.col_idx = col;
         this.action = action;
     }
 
-    public static int parseLetterIndex(String rawString) {
+    /**
+     * Parses the row alphabetic character into a row index
+     * @param rawString The letters inputted by the user
+     * @return The row index
+     */
+    private static int parseLetterIndex(String rawString) {
         String ALPHABET = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int index = 0;
         for (char c : rawString.toUpperCase().toCharArray()) {
@@ -34,6 +49,12 @@ public class GameInput {
         return index-1;
     }
 
+    /**
+     * Takes a raw string and parses it to a GameInput object.
+     * String must be made up of two words: an action and co-ordinates represented as an alphabetic character and a number
+     * @param rawInput The raw input string from the user.
+     * @return A GameInput object usable for board actions.
+     */
     public static GameInput parseInput(String rawInput) {
         String[] inputArr = rawInput.split(" ");
         if (inputArr.length != 2) return new GameInput(InputErrorType.CommandSyntax);
@@ -68,22 +89,42 @@ public class GameInput {
         return gi;
     }
 
+    /**
+     * Returns the action type of the input.
+     * @return The action type of the input.
+     */
     public ActionType getAction() {
         return action;
     }
 
+    /**
+     * Returns the row index of the input move.
+     * @return The row index of the input move.
+     */
     public int getRow_idx() {
         return row_idx;
     }
 
+    /**
+     * Returns the column index of the input move.
+     * @return The column index of the input move.
+     */
     public int getCol_idx() {
         return col_idx;
     }
 
+    /**
+     * Returns true if the input has no errors currently and is usable.
+     * @return True if the error type is None.
+     */
     public boolean hasNoError() {
         return error == InputErrorType.None;
     }
 
+    /**
+     * Returns the current error type of the input.
+     * @return The current error type of the input.
+     */
     public InputErrorType getError() {
         return error;
     }
