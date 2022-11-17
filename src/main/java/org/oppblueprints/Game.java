@@ -73,7 +73,7 @@ public class Game {
                 if (result.getError() == ResultErrorType.None) {
                     if (result.isGameLost()) {
                         isGameRunning = false;
-                        timer.purge();
+                        timer.cancel();
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
 
@@ -86,7 +86,7 @@ public class Game {
                     } else {
                         cellsToOpen -= result.getTilesOpened();
                         if (cellsToOpen <= 0) {
-                            timer.purge();
+                            timer.cancel();
                             isGameRunning = false;
                             System.out.println("You win");
 
@@ -100,6 +100,8 @@ public class Game {
                     switch (result.getError()) {
                         case InvalidIndex -> System.out.println("Input Error: Out of Bounds");
                         case AlreadyCleared -> System.out.println("Input Error: Tile already cleared");
+                        case Flagged -> System.out.println("Result Error: Tile currently flagged");
+                        case FlagFirstMove -> System.out.println("Result Error: You cannot use a flag on the first move");
                         default -> System.out.println("Result Error: Error with message: " + result.getError());
                     }
                 }
