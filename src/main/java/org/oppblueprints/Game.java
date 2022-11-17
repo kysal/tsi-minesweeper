@@ -2,11 +2,14 @@ package org.oppblueprints;
 
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Game {
     Board board;
     int flagsLeft;
     int cellsToOpen;
+    private int secondsPassed = 0;
 
     /**
      * Default constructor, doesn't initialise anything. Use .start() to initialise.
@@ -33,14 +36,23 @@ public class Game {
         boolean isGameRunning = true;
         board = new Board(difficulty);
         flagsLeft = difficulty.mines();
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                secondsPassed++;
+            }
+        };
 
         Scanner scanner = new Scanner(System.in);
+        timer.scheduleAtFixedRate(timerTask, 2000,1000);
 
         // Game started
         while (isGameRunning) {
             // Print game state
             System.out.println(this.board.printBoard());
             System.out.println("Flags: " + flagsLeft);
+            System.out.println("Time: " + secondsPassed + "s");
 
             // Ask for input
             System.out.print("Next Input: ");
@@ -132,9 +144,9 @@ public class Game {
             } else {
                 // Choice of set difficulties outlined in Difficulty.java
                 difficulty = switch (input) {
-                    case "b", "beginner" -> Difficulty.beginner();
-                    case "i", "intermediate" -> Difficulty.intermediate();
-                    case "e", "expert" -> Difficulty.expert();
+                    case "b", "beginner", "easy" -> Difficulty.beginner();
+                    case "i", "intermediate", "medium" -> Difficulty.intermediate();
+                    case "e", "expert", "hard" -> Difficulty.expert();
                     default -> null;
                 };
             }

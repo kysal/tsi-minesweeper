@@ -2,6 +2,8 @@ package org.oppblueprints;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.TimerTask;
+import java.util.Timer;
 
 /**
  * GUI extension class for the Game class for Minesweeper.
@@ -18,6 +20,8 @@ public class GUI {
     boolean lost = false;
     JLabel infoBox = new JLabel("");
     int cellsToOpen;
+    int secondsPassed = 0;
+    boolean timerActive = false;
 
     /**
      * Default constructor. Initialises the GUI and game variables.
@@ -28,6 +32,8 @@ public class GUI {
     private GUI(Difficulty difficulty) {
         board = new Board(difficulty);
         flags_left = difficulty.mines();
+
+
 
         frame = new JFrame();
         mainPanel = new JPanel();
@@ -42,7 +48,22 @@ public class GUI {
 
 
         // Options panel
-        mainPanel.add(generateOptionsPanel());
+        JPanel optPanel = generateOptionsPanel();
+        JLabel timerLabel = new JLabel("0s");
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                if (timerActive) {
+                    secondsPassed++;
+                    timerLabel.setText(secondsPassed + "s");
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 1000, 1000);
+        optPanel.add(timerLabel);
+
+        mainPanel.add(optPanel);
 
         // Grid panel
         JPanel gridPanel = new JPanel();
@@ -116,13 +137,16 @@ public class GUI {
             if (result.isGameLost()) {
                 // DISPLAY BOX
                 lost = true;
+                timerActive = false;
                 infoBox.setText("You lose!");
             } else if (actionMode == ActionType.Flag) {
                 if (result.isFlagPlaced()) flags_left--;
                 else flags_left++;
             } else if (actionMode == ActionType.Open) {
+                if (!timerActive) timerActive = true;
                 cellsToOpen -= result.getTilesOpened();
                 if (cellsToOpen <= 0) {
+                    timerActive = false;
                     disableGrid();
                     infoBox.setText("You win!");
                 }
