@@ -227,7 +227,7 @@ public class Board {
      * @return A line of appropriate length to the number of columns.
      */
     private String rowLine() {
-        return "-" + "+--".repeat(Math.max(0, board[0].length + 1)) + "\n";
+        return ("-" + "+--".repeat(Math.max(0, board[0].length + 1))).substring(0, 2 + (board[0].length) * 3)+ "\n";
     }
 
     /**
@@ -236,9 +236,9 @@ public class Board {
      */
     private int mineCount() {
         int mines = 0;
-        for (int row = 0; row < this.board.length; row++) {
-            for (int col = 0; col < this.board[0].length; col++) {
-                if (this.board[row][col].hasMine()) mines++;
+        for (Cell[] rows : this.board) {
+            for (Cell cell : rows) {
+                if (cell.hasMine()) mines++;
             }
         }
         return mines;

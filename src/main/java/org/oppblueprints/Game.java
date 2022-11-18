@@ -7,8 +7,8 @@ import java.util.TimerTask;
 
 public class Game {
     Board board;
-    int flagsLeft;
-    int cellsToOpen;
+    private int flagsLeft;
+    private int cellsToOpen;
     private int secondsPassed = 0;
 
     /**
@@ -33,9 +33,9 @@ public class Game {
      * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
      */
     public boolean play(Difficulty difficulty) {
-        boolean isGameRunning = true;
         board = new Board(difficulty);
         flagsLeft = difficulty.mines();
+        secondsPassed = 0;
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -46,9 +46,10 @@ public class Game {
 
         Scanner scanner = new Scanner(System.in);
         timer.scheduleAtFixedRate(timerTask, 2000,1000);
+        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
         // Game started
-        while (isGameRunning) {
+        while (true) {
             // Print game state
             System.out.println(this.board.printBoard());
             System.out.println("Flags: " + flagsLeft);
@@ -72,7 +73,6 @@ public class Game {
                 GameResult result = this.board.action(input);
                 if (result.getError() == ResultErrorType.None) {
                     if (result.isGameLost()) {
-                        isGameRunning = false;
                         timer.cancel();
                         System.out.println(this.board.printBoard());
                         System.out.println("Mine detected! You lose!");
@@ -87,7 +87,6 @@ public class Game {
                         cellsToOpen -= result.getTilesOpened();
                         if (cellsToOpen <= 0) {
                             timer.cancel();
-                            isGameRunning = false;
                             System.out.println("You win");
 
                             System.out.print("Play again? (Y/N): ");
@@ -106,6 +105,7 @@ public class Game {
                     }
                 }
             } else {
+                // Handles Input Error messages received from GameInput
                 switch (input.getError()) {
                     case UnknownChar -> System.out.println("Input Error: An unexpected character was found in input");
                     case CommandSyntax -> System.out.println("Input Error: Error in command syntax. Try 'help'");
@@ -115,7 +115,6 @@ public class Game {
                 }
             }
         }
-        return false;
     }
 
     /**
@@ -162,7 +161,7 @@ public class Game {
                 };
             }
         }
-        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
+
 
         // Choice of interface
         System.out.print("(C)ommand Line or (G)UI: ");

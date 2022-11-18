@@ -30,24 +30,24 @@ public class GUI {
      * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
      */
     private GUI(Difficulty difficulty) {
+        // Game variables
         board = new Board(difficulty);
         flags_left = difficulty.mines();
         this.difficulty = difficulty;
         cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
+        // Main Frame Set up
         frame = new JFrame();
         mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
-        mainPanel.setLayout(new FlowLayout());
-
-
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Minesweeper");
 
-
         // Options panel
         JPanel optPanel = generateOptionsPanel();
+        // Timer
         JLabel timerLabel = new JLabel("0s");
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -61,7 +61,6 @@ public class GUI {
         };
         timer.scheduleAtFixedRate(task, 1000, 1000);
         optPanel.add(timerLabel);
-
         mainPanel.add(optPanel);
 
         // Grid panel
@@ -70,6 +69,7 @@ public class GUI {
         gridPanel.setLayout(new GridLayout(difficulty.rows(), difficulty.cols()));
         buttonGrid = new JButton[difficulty.rows()][difficulty.cols()];
 
+        // Adding tiles to grid panel
         for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
             for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
                 JButton button = new JButton("██");
@@ -86,12 +86,11 @@ public class GUI {
                 gridPanel.add(button);
             }
         }
-
         mainPanel.add(gridPanel);
         mainPanel.add(infoBox);
 
-//        frame.setSize(600, 800);
-        frame.pack();
+        frame.setSize(600, 800);
+//        frame.pack();
         frame.setVisible(true);
 
     }
@@ -124,21 +123,7 @@ public class GUI {
         optionPanel.add(modeDisplay);
 
         JButton restartButton = new JButton("Restart");
-        restartButton.addActionListener(e -> {
-            board = new Board(difficulty);
-            flags_left = difficulty.mines();
-            cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
-            secondsPassed = 0;
-            lost = false;
-            timerActive = false;
-            for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
-                for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
-                    buttonGrid[row_idx][col_idx].setText("██");
-                    buttonGrid[row_idx][col_idx].setForeground(Color.BLACK);
-                    buttonGrid[row_idx][col_idx].setBackground(null);
-                }
-            }
-        });
+        restartButton.addActionListener(e -> resetGame());
         optionPanel.add(restartButton);
 
         return optionPanel;
@@ -205,12 +190,31 @@ public class GUI {
     }
 
     /**
+     * Resets grid and variables in GUI to initial state.
+     */
+    private void resetGame() {
+        board = new Board(difficulty);
+        flags_left = difficulty.mines();
+        cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
+        secondsPassed = 0;
+        lost = false;
+        timerActive = false;
+        infoBox.setText("");
+        for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
+            for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
+                buttonGrid[row_idx][col_idx].setText("██");
+                buttonGrid[row_idx][col_idx].setForeground(Color.BLACK);
+                buttonGrid[row_idx][col_idx].setBackground(null);
+                buttonGrid[row_idx][col_idx].setEnabled(true);
+            }
+        }
+    }
+
+    /**
      * Sets up Minesweeper game and displays GUI to user
      * @param difficulty The game difficulty containing the number of rows, columns and mines in the game.
      */
     public static void playGUI(Difficulty difficulty) {
         new GUI(difficulty);
     }
-
-
 }
