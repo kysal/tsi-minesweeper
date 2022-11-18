@@ -129,11 +129,13 @@ public class GUI {
             flags_left = difficulty.mines();
             cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
             secondsPassed = 0;
+            lost = false;
             timerActive = false;
             for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
                 for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
                     buttonGrid[row_idx][col_idx].setText("██");
                     buttonGrid[row_idx][col_idx].setForeground(Color.BLACK);
+                    buttonGrid[row_idx][col_idx].setBackground(null);
                 }
             }
         });
