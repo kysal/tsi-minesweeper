@@ -7,13 +7,13 @@ public class Board {
     private final Cell[][] boardArray;
     private final Difficulty difficulty;
     private boolean initialised;
+    private Random random;
 
     /**
      * Places a given number of cells into board as mines.
      * @param mines number of mines to be placed.
      */
     private void addMines(int mines) {
-        Random random = new Random();
 
         for (int i = 0; i < mines; i++) {
             // Randomly generate new co-ordinate for mine location
@@ -77,6 +77,7 @@ public class Board {
         this.boardArray = new Cell[opts.rows()][opts.cols()];
         this.difficulty = opts;
         this.initialised = false;
+        random = new Random();
     }
 
     /**
