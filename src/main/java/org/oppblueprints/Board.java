@@ -90,8 +90,8 @@ public class Board {
         int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};
         int tilesOpened = 0;
         for (int[] index : surroundingIndices) {
-            if (index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1) continue;
-            if (boardArray[index[0]][index[1]].isCleared()) continue;
+            if ((index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1)
+                    || boardArray[index[0]][index[1]].isCleared()) continue;
             GameResult result = action(new GameInput(index[0], index[1], ActionType.OPEN));
             tilesOpened += result.getTilesOpened();
         }
@@ -145,7 +145,6 @@ public class Board {
             GameResult result = this.boardArray[input.getRow_idx()][input.getCol_idx()].reveal();
 
             if (result.isGameLost()) { revealAllMines(); return result;}
-//            result.setWon(hasWon());
 
             // If not mine, check surrounding tiles for mines to produce tile number
             int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
@@ -153,7 +152,7 @@ public class Board {
                 try {
                     result.setTilesOpened(autoOpen(input.getRow_idx(), input.getCol_idx())+1);
                 } catch (StackOverflowError e) {
-                    System.out.println("Stack Overflow Occurred");
+                    System.err.println("Stack Overflow Occurred");
                 }
             }
             else result.setTilesOpened(1);
@@ -229,20 +228,6 @@ public class Board {
      */
     private String rowLine() {
         return ("-" + "+--".repeat(Math.max(0, boardArray[0].length + 1))).substring(0, 2 + (boardArray[0].length) * 3)+ "\n";
-    }
-
-    /**
-     * DEBUG: Checks total number of mines in board.
-     * @return The number of mines on the board.
-     */
-    private int mineCount() {
-        int mines = 0;
-        for (Cell[] rows : this.boardArray) {
-            for (Cell cell : rows) {
-                if (cell.hasMine()) mines++;
-            }
-        }
-        return mines;
     }
 
     /**

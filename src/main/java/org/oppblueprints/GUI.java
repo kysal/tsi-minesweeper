@@ -16,7 +16,7 @@ public class GUI {
     Board board;
     JButton[][] buttonGrid;
     Difficulty difficulty;
-    int flags_left;
+    int flagsLeft;
     boolean lost = false;
     JLabel infoBox = new JLabel("");
     int cellsToOpen;
@@ -32,7 +32,7 @@ public class GUI {
     private GUI(Difficulty difficulty) {
         // Game variables
         board = new Board(difficulty);
-        flags_left = difficulty.mines();
+        flagsLeft = difficulty.mines();
         this.difficulty = difficulty;
         cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
@@ -90,7 +90,6 @@ public class GUI {
         mainPanel.add(infoBox);
 
         frame.setSize(600, 800);
-//        frame.pack();
         frame.setVisible(true);
 
     }
@@ -129,6 +128,20 @@ public class GUI {
         return optionPanel;
     }
 
+    private Color pickCellColor(CellState cellState) {
+        return switch (cellState) {
+            case MINED_1 -> Color.BLUE;
+            case MINED_2 -> Color.GREEN;
+            case MINED_3 -> Color.RED;
+            case MINED_4 -> new Color(25, 25, 112);
+            case MINED_5 -> new Color(128,0,0);
+            case MINED_6 -> new Color(70,130,180);
+            case MINED_7 -> new Color(139,0,139);
+            case MINED_8 -> Color.GRAY;
+            default -> Color.BLACK;
+        };
+    }
+
     /**
      * The actions taken place after a move has been taken.
      * Contains result error checking, variable updates, and visual updates.
@@ -143,8 +156,8 @@ public class GUI {
                 timerActive = false;
                 infoBox.setText("You lose!");
             } else if (actionMode == ActionType.FLAG) {
-                if (result.isFlagPlaced()) flags_left--;
-                else flags_left++;
+                if (result.isFlagPlaced()) flagsLeft--;
+                else flagsLeft++;
             } else if (actionMode == ActionType.OPEN) {
                 if (!timerActive) timerActive = true;
                 cellsToOpen -= result.getTilesOpened();
@@ -159,19 +172,7 @@ public class GUI {
                 for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
                     String symbol = board.getCellSymbol(row_idx, col_idx);
                     buttonGrid[row_idx][col_idx].setText(symbol);
-
-                    buttonGrid[row_idx][col_idx].setForeground( switch (board.getCellState(row_idx, col_idx)) {
-                        case MINED_1 -> Color.BLUE;
-                        case MINED_2 -> Color.GREEN;
-                        case MINED_3 -> Color.RED;
-                        case MINED_4 -> new Color(25, 25, 112);
-                        case MINED_5 -> new Color(128,0,0);
-                        case MINED_6 -> new Color(70,130,180);
-                        case MINED_7 -> new Color(139,0,139);
-                        case MINED_8 -> Color.GRAY;
-                        default -> Color.BLACK;
-                    });
-
+                    buttonGrid[row_idx][col_idx].setForeground(pickCellColor(board.getCellState(row_idx, col_idx)));
                     if (board.getCellState(row_idx, col_idx) == CellState.MINE) { buttonGrid[row_idx][col_idx].setBackground(Color.RED); }
                 }
             }
@@ -194,7 +195,7 @@ public class GUI {
      */
     private void resetGame() {
         board = new Board(difficulty);
-        flags_left = difficulty.mines();
+        flagsLeft = difficulty.mines();
         cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
         secondsPassed = 0;
         lost = false;
