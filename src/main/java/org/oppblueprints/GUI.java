@@ -42,7 +42,7 @@ public class GUI {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         frame.add(mainPanel, BorderLayout.CENTER);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("Minesweeper");
 
         // Options panel
@@ -142,6 +142,17 @@ public class GUI {
         };
     }
 
+    private void updateGridVisuals() {
+        for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
+            for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
+                String symbol = board.getCellSymbol(row_idx, col_idx);
+                buttonGrid[row_idx][col_idx].setText(symbol);
+                buttonGrid[row_idx][col_idx].setForeground(pickCellColor(board.getCellState(row_idx, col_idx)));
+                if (board.getCellState(row_idx, col_idx) == CellState.MINE) { buttonGrid[row_idx][col_idx].setBackground(Color.RED); }
+            }
+        }
+    }
+
     /**
      * The actions taken place after a move has been taken.
      * Contains result error checking, variable updates, and visual updates.
@@ -149,33 +160,34 @@ public class GUI {
      */
     private void postActionGameUpdate(GameResult result) {
         if (result.getError() == ResultErrorType.NONE) {
-
-            if (result.isGameLost()) {
-                // DISPLAY BOX
-                lost = true;
-                timerActive = false;
-                infoBox.setText("You lose!");
-            } else if (actionMode == ActionType.FLAG) {
+            checkLossCondition(result);
+            if (actionMode == ActionType.FLAG) {
                 if (result.isFlagPlaced()) flagsLeft--;
                 else flagsLeft++;
-            } else if (actionMode == ActionType.OPEN) {
+            } else {
                 if (!timerActive) timerActive = true;
                 cellsToOpen -= result.getTilesOpened();
-                if (cellsToOpen <= 0) {
-                    timerActive = false;
-                    disableGrid();
-                    infoBox.setText("You win!");
-                }
+                checkWinCondition();
             }
+            updateGridVisuals();
+        } else {
+            System.err.println("Error: " + result.getError());
+        }
+    }
 
-            for (int row_idx = 0; row_idx < difficulty.rows(); row_idx++) {
-                for (int col_idx = 0; col_idx < difficulty.cols(); col_idx++) {
-                    String symbol = board.getCellSymbol(row_idx, col_idx);
-                    buttonGrid[row_idx][col_idx].setText(symbol);
-                    buttonGrid[row_idx][col_idx].setForeground(pickCellColor(board.getCellState(row_idx, col_idx)));
-                    if (board.getCellState(row_idx, col_idx) == CellState.MINE) { buttonGrid[row_idx][col_idx].setBackground(Color.RED); }
-                }
-            }
+    private void checkLossCondition(GameResult result) {
+        if (result.isGameLost()) {
+            lost = true;
+            timerActive = false;
+            infoBox.setText("You lose!");
+        }
+    }
+
+    private void checkWinCondition() {
+        if (cellsToOpen <= 0) {
+            timerActive = false;
+            disableGrid();
+            infoBox.setText("You win!");
         }
     }
 
