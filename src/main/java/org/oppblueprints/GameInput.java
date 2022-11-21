@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public class GameInput {
 
-    private int row_idx;
-    private int col_idx;
+    private int rowIdx;
+    private int colIdx;
     ActionType action;
     private InputErrorType error;
 
@@ -20,7 +20,7 @@ public class GameInput {
 
     @Override
     public String toString() {
-        return "Action: " + action + "\nRow: " + row_idx + "\nCol: " + col_idx;
+        return "Action: " + action + "\nRow: " + rowIdx + "\nCol: " + colIdx;
     }
 
     /**
@@ -30,8 +30,8 @@ public class GameInput {
      * @param action The action to take place at a given row column index.
      */
     public GameInput(int row, int col, ActionType action) {
-        this.row_idx = row;
-        this.col_idx = col;
+        this.rowIdx = row;
+        this.colIdx = col;
         this.action = action;
     }
 
@@ -41,10 +41,10 @@ public class GameInput {
      * @return The row index
      */
     private static int parseLetterIndex(String rawString) {
-        String ALPHABET = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String alphabet = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int index = 0;
         for (char c : rawString.toUpperCase().toCharArray()) {
-            index = index * 26 + ALPHABET.indexOf(c);
+            index = index * 26 + alphabet.indexOf(c);
         }
         return index-1;
     }
@@ -78,13 +78,13 @@ public class GameInput {
         if (inputArr[1].replaceAll("[^A-Za-z]", "").equals("")) return new GameInput(InputErrorType.ROW_INDEX_UNDEFINED);
         if (inputArr[1].replaceAll("[^A-Za-z]", "").length() > 6) return new GameInput(InputErrorType.ROW_INDEX_TOO_LARGE);
             // Parse letter to row index value
-        gi.row_idx = GameInput.parseLetterIndex((inputArr[1].replaceAll("[^A-Za-z]", "")));
+        gi.rowIdx = GameInput.parseLetterIndex((inputArr[1].replaceAll("[^A-Za-z]", "")));
 
         // If option contains no numbers return error
-        if (inputArr[1].replaceAll("[^0-9]", "").equals("")) return new GameInput(InputErrorType.COL_INDEX_UNDEFINED);
-        if (inputArr[1].replaceAll("[^0-9]", "").length() > 9) return new GameInput(InputErrorType.COL_INDEX_TOO_LARGE);
+        if (inputArr[1].replaceAll("\\D", "").equals("")) return new GameInput(InputErrorType.COL_INDEX_UNDEFINED);
+        if (inputArr[1].replaceAll("\\D", "").length() > 9) return new GameInput(InputErrorType.COL_INDEX_TOO_LARGE);
         // Parse number to row index
-        gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[^0-9]", "")) -1;
+        gi.colIdx = Integer.parseInt(inputArr[1].replaceAll("\\D", "")) -1;
 
         return gi;
     }
@@ -101,16 +101,16 @@ public class GameInput {
      * Returns the row index of the input move.
      * @return The row index of the input move.
      */
-    public int getRow_idx() {
-        return row_idx;
+    public int getRowIdx() {
+        return rowIdx;
     }
 
     /**
      * Returns the column index of the input move.
      * @return The column index of the input move.
      */
-    public int getCol_idx() {
-        return col_idx;
+    public int getColIdx() {
+        return colIdx;
     }
 
     /**

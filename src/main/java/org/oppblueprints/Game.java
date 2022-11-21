@@ -71,7 +71,7 @@ public class Game {
             if (input.hasNoError()) {
                 // Send input to board
                 GameResult result = this.board.action(input);
-                if (result.getError() == ResultErrorType.None) {
+                if (result.getError() == ResultErrorType.NONE) {
                     if (result.isGameLost()) {
                         timer.cancel();
                         System.out.println(this.board.printBoard());
@@ -97,10 +97,10 @@ public class Game {
                 } else {
                     // Handles Input and output error messages received from GameResult
                     switch (result.getError()) {
-                        case InvalidIndex -> System.out.println("Input Error: Out of Bounds");
-                        case AlreadyCleared -> System.out.println("Input Error: Tile already cleared");
-                        case Flagged -> System.out.println("Result Error: Tile currently flagged");
-                        case FlagFirstMove -> System.out.println("Result Error: You cannot use a flag on the first move");
+                        case INVALID_INDEX -> System.out.println("Input Error: Out of Bounds");
+                        case ALREADY_CLEARED -> System.out.println("Input Error: Tile already cleared");
+                        case FLAGGED -> System.out.println("Result Error: Tile currently flagged");
+                        case FLAG_FIRST_MOVE -> System.out.println("Result Error: You cannot use a flag on the first move");
                         default -> System.out.println("Result Error: Error with message: " + result.getError());
                     }
                 }

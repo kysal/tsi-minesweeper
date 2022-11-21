@@ -1,10 +1,10 @@
 package org.oppblueprints;
 
 public enum ResultErrorType {
-    None,
-    InvalidIndex,
-    AlreadyCleared,
-    Flagged,
-    NoAction,
-    FlagFirstMove,
+    NONE,
+    INVALID_INDEX,
+    ALREADY_CLEARED,
+    FLAGGED,
+    NO_ACTION,
+    FLAG_FIRST_MOVE,
 }

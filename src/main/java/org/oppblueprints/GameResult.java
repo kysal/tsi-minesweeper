@@ -19,7 +19,7 @@ public class GameResult {
      * @param lost The new lost state of the game.
      */
     public GameResult(boolean lost) {
-        this.error = ResultErrorType.None;
+        this.error = ResultErrorType.NONE;
         this.lost = lost;
     }
 

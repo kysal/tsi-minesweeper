@@ -114,6 +114,53 @@ public class Board {
         return mines;
     }
 
+    private GameResult openCell(GameInput input) {
+
+        // Init board before first action
+        if (!initialised) {
+            generateBoard(input.getRowIdx(), input.getColIdx());
+            initialised = true;
+        }
+
+        // Return Error if tile already opened or flagged
+        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isCleared())
+            return new GameResult(ResultErrorType.ALREADY_CLEARED);
+        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isFlagged())
+            return new GameResult(ResultErrorType.FLAGGED);
+
+        // GAME RESULT PRODUCED
+        // Update visual and check if opened mine
+        GameResult result = this.boardArray[input.getRowIdx()][input.getColIdx()].reveal();
+
+        if (result.isGameLost()) { revealAllMines(); return result;}
+
+        // If not mine, check surrounding tiles for mines to produce tile number
+        int surroundingMines = getSurroundingMines(input.getRowIdx(), input.getColIdx());
+        if (surroundingMines == 0) {
+            try {
+                result.setTilesOpened(autoOpen(input.getRowIdx(), input.getColIdx())+1);
+            } catch (StackOverflowError e) {
+                System.err.println("Stack Overflow Occurred");
+            }
+        }
+        else result.setTilesOpened(1);
+
+        this.boardArray[input.getRowIdx()][input.getColIdx()].setMineNumber(surroundingMines);
+
+        return result;
+    }
+
+    private GameResult flagCell(GameInput input) {
+        if (!initialised) return new GameResult(ResultErrorType.FLAG_FIRST_MOVE);
+
+        // Return Error if tile already opened
+        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isCleared())
+            return new GameResult(ResultErrorType.ALREADY_CLEARED);
+
+        // Return game result from flag
+        return this.boardArray[input.getRowIdx()][input.getColIdx()].flag();
+    }
+
     /**
      * Performs the input action on the board.
      * @param input An GameInput object containing the game action desired and the row and col index where it should happen.
@@ -122,59 +169,19 @@ public class Board {
     public GameResult action(GameInput input) {
 
         // If input index out of bounds
-        if (input.getRow_idx() < 0 || input.getRow_idx() > this.boardArray.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.boardArray[0].length-1)
-            return new GameResult(ResultErrorType.InvalidIndex);
+        if (input.getRowIdx() < 0 || input.getRowIdx() > this.boardArray.length-1 || input.getColIdx() < 0 || input.getColIdx() > this.boardArray[0].length-1)
+            return new GameResult(ResultErrorType.INVALID_INDEX);
 
         // Input open command
         if (input.action == ActionType.OPEN) {
-
-            // Init board before first action
-            if (!initialised) {
-                generateBoard(input.getRow_idx(), input.getCol_idx());
-                initialised = true;
-            }
-
-            // Return Error if tile already opened or flagged
-            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isCleared())
-                return new GameResult(ResultErrorType.AlreadyCleared);
-            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isFlagged())
-                return new GameResult(ResultErrorType.Flagged);
-
-            // GAME RESULT PRODUCED
-            // Update visual and check if opened mine
-            GameResult result = this.boardArray[input.getRow_idx()][input.getCol_idx()].reveal();
-
-            if (result.isGameLost()) { revealAllMines(); return result;}
-
-            // If not mine, check surrounding tiles for mines to produce tile number
-            int surroundingMines = getSurroundingMines(input.getRow_idx(), input.getCol_idx());
-            if (surroundingMines == 0) {
-                try {
-                    result.setTilesOpened(autoOpen(input.getRow_idx(), input.getCol_idx())+1);
-                } catch (StackOverflowError e) {
-                    System.err.println("Stack Overflow Occurred");
-                }
-            }
-            else result.setTilesOpened(1);
-
-            this.boardArray[input.getRow_idx()][input.getCol_idx()].setMineNumber(surroundingMines);
-
-            return result;
-
+            return openCell(input);
         // Input flag command
         } else if (input.action == ActionType.FLAG) {
-            if (!initialised) return new GameResult(ResultErrorType.FlagFirstMove);
-
-            // Return Error if tile already opened
-            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isCleared())
-                return new GameResult(ResultErrorType.AlreadyCleared);
-
-            // Return game result from flag
-            return this.boardArray[input.getRow_idx()][input.getCol_idx()].flag();
+            return flagCell(input);
         }
 
         // Return error if no action
-        return new GameResult(ResultErrorType.NoAction);
+        return new GameResult(ResultErrorType.NO_ACTION);
     }
 
     /**

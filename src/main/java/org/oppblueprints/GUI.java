@@ -148,7 +148,7 @@ public class GUI {
      * @param result The GameResult object containing move aftermath information.
      */
     private void postActionGameUpdate(GameResult result) {
-        if (result.getError() == ResultErrorType.None) {
+        if (result.getError() == ResultErrorType.NONE) {
 
             if (result.isGameLost()) {
                 // DISPLAY BOX
