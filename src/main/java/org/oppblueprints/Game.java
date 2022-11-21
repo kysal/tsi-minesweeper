@@ -79,7 +79,7 @@ public class Game {
 
                         System.out.print("Play again? (Y/N): ");
                         return scanner.nextLine().equalsIgnoreCase("Y");
-                    } else if (input.action == ActionType.Flag) {
+                    } else if (input.action == ActionType.FLAG) {
                         // Change flag variable when action taken
                         if (result.isFlagPlaced()) flagsLeft--;
                         else flagsLeft++;
@@ -107,10 +107,10 @@ public class Game {
             } else {
                 // Handles Input Error messages received from GameInput
                 switch (input.getError()) {
-                    case UnknownChar -> System.out.println("Input Error: An unexpected character was found in input");
-                    case CommandSyntax -> System.out.println("Input Error: Error in command syntax. Try 'help'");
-                    case RowIndexUndefined -> System.out.println("Input Error: Your input contained no alphabet characters and thus row could not be determined");
-                    case ColIndexUndefined -> System.out.println("Input Error: Your input contained no number characters and thus column could not be determined");
+                    case UNKNOWN_CHAR -> System.out.println("Input Error: An unexpected character was found in input");
+                    case COMMAND_SYNTAX -> System.out.println("Input Error: Error in command syntax. Try 'help'");
+                    case ROW_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no alphabet characters and thus row could not be determined");
+                    case COL_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no number characters and thus column could not be determined");
                     default -> System.out.println("Input Error: Error without message: " + input.getError());
                 }
             }

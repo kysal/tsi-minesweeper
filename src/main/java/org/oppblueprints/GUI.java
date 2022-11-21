@@ -12,7 +12,7 @@ import java.util.Timer;
 public class GUI {
     JFrame frame;
     JPanel mainPanel;
-    ActionType actionMode = ActionType.Open;
+    ActionType actionMode = ActionType.OPEN;
     Board board;
     JButton[][] buttonGrid;
     Difficulty difficulty;
@@ -108,12 +108,12 @@ public class GUI {
         JLabel modeDisplay = new JLabel("Currently In: Dig Mode");
         JButton digModeSelector = new JButton("Dig Mode");
         digModeSelector.addActionListener(e -> {
-            actionMode = ActionType.Open;
+            actionMode = ActionType.OPEN;
             modeDisplay.setText("Currently In: Dig Mode");
         } );
         JButton flagModeSelector = new JButton("Flag Mode");
         flagModeSelector.addActionListener(e -> {
-            actionMode = ActionType.Flag;
+            actionMode = ActionType.FLAG;
             modeDisplay.setText("Currently In: Flag Mode");
         });
 
@@ -142,10 +142,10 @@ public class GUI {
                 lost = true;
                 timerActive = false;
                 infoBox.setText("You lose!");
-            } else if (actionMode == ActionType.Flag) {
+            } else if (actionMode == ActionType.FLAG) {
                 if (result.isFlagPlaced()) flags_left--;
                 else flags_left++;
-            } else if (actionMode == ActionType.Open) {
+            } else if (actionMode == ActionType.OPEN) {
                 if (!timerActive) timerActive = true;
                 cellsToOpen -= result.getTilesOpened();
                 if (cellsToOpen <= 0) {
@@ -161,18 +161,18 @@ public class GUI {
                     buttonGrid[row_idx][col_idx].setText(symbol);
 
                     buttonGrid[row_idx][col_idx].setForeground( switch (board.getCellState(row_idx, col_idx)) {
-                        case Mined1 -> Color.BLUE;
-                        case Mined2 -> Color.GREEN;
-                        case Mined3 -> Color.RED;
-                        case Mined4 -> new Color(25, 25, 112);
-                        case Mined5 -> new Color(128,0,0);
-                        case Mined6 -> new Color(70,130,180);
-                        case Mined7 -> new Color(139,0,139);
-                        case Mined8 -> Color.GRAY;
+                        case MINED_1 -> Color.BLUE;
+                        case MINED_2 -> Color.GREEN;
+                        case MINED_3 -> Color.RED;
+                        case MINED_4 -> new Color(25, 25, 112);
+                        case MINED_5 -> new Color(128,0,0);
+                        case MINED_6 -> new Color(70,130,180);
+                        case MINED_7 -> new Color(139,0,139);
+                        case MINED_8 -> Color.GRAY;
                         default -> Color.BLACK;
                     });
 
-                    if (board.getCellState(row_idx, col_idx) == CellState.Mine) { buttonGrid[row_idx][col_idx].setBackground(Color.RED); }
+                    if (board.getCellState(row_idx, col_idx) == CellState.MINE) { buttonGrid[row_idx][col_idx].setBackground(Color.RED); }
                 }
             }
         }

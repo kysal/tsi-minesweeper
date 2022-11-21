@@ -1,16 +1,16 @@
 package org.oppblueprints;
 
 public enum CellState {
-    Unmined,
-    MinedNone,
-    Mined1,
-    Mined2,
-    Mined3,
-    Mined4,
-    Mined5,
-    Mined6,
-    Mined7,
-    Mined8,
-    Flag,
-    Mine
+    UNMINED,
+    MINED_NONE,
+    MINED_1,
+    MINED_2,
+    MINED_3,
+    MINED_4,
+    MINED_5,
+    MINED_6,
+    MINED_7,
+    MINED_8,
+    FLAG,
+    MINE
 }

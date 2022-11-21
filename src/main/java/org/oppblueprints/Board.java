@@ -91,7 +91,7 @@ public class Board {
         for (int[] index : surroundingIndices) {
             if (index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1) continue;
             if (boardArray[index[0]][index[1]].isCleared()) continue;
-            GameResult result = action(new GameInput(index[0], index[1], ActionType.Open));
+            GameResult result = action(new GameInput(index[0], index[1], ActionType.OPEN));
             tilesOpened += result.getTilesOpened();
         }
         return tilesOpened;
@@ -125,7 +125,7 @@ public class Board {
             return new GameResult(ResultErrorType.InvalidIndex);
 
         // Input open command
-        if (input.action == ActionType.Open) {
+        if (input.action == ActionType.OPEN) {
 
             // Init board before first action
             if (!initialised) {
@@ -162,7 +162,7 @@ public class Board {
             return result;
 
         // Input flag command
-        } else if (input.action == ActionType.Flag) {
+        } else if (input.action == ActionType.FLAG) {
             if (!initialised) return new GameResult(ResultErrorType.FlagFirstMove);
 
             // Return Error if tile already opened

@@ -5,7 +5,7 @@ package org.oppblueprints;
  */
 public class Cell {
 
-    private CellState visualCellState = CellState.Unmined;
+    private CellState visualCellState = CellState.UNMINED;
     private final boolean isMine;
     private boolean isCleared = false;
 
@@ -60,16 +60,16 @@ public class Cell {
      */
     public void setMineNumber(int mines) {
         this.setState(switch (mines) {
-            case 0 -> CellState.MinedNone;
-            case 1 -> CellState.Mined1;
-            case 2 -> CellState.Mined2;
-            case 3 -> CellState.Mined3;
-            case 4 -> CellState.Mined4;
-            case 5 -> CellState.Mined5;
-            case 6 -> CellState.Mined6;
-            case 7 -> CellState.Mined7;
-            case 8 -> CellState.Mined8;
-            default -> CellState.Unmined;
+            case 0 -> CellState.MINED_NONE;
+            case 1 -> CellState.MINED_1;
+            case 2 -> CellState.MINED_2;
+            case 3 -> CellState.MINED_3;
+            case 4 -> CellState.MINED_4;
+            case 5 -> CellState.MINED_5;
+            case 6 -> CellState.MINED_6;
+            case 7 -> CellState.MINED_7;
+            case 8 -> CellState.MINED_8;
+            default -> CellState.UNMINED;
 
         });
     }
@@ -81,7 +81,7 @@ public class Cell {
     public GameResult reveal() {
         isCleared = true;
         if (isMine) {
-            this.visualCellState = CellState.Mine;
+            this.visualCellState = CellState.MINE;
             return new GameResult(true);
         }
         return new GameResult(false);
@@ -93,12 +93,12 @@ public class Cell {
      */
     public GameResult flag() {
         GameResult result = new GameResult(false);
-        if (this.visualCellState == CellState.Flag) {
-            this.visualCellState = CellState.Unmined;
+        if (this.visualCellState == CellState.FLAG) {
+            this.visualCellState = CellState.UNMINED;
             result.setFlagPlaced(false);
         }
         else {
-            this.visualCellState = CellState.Flag;
+            this.visualCellState = CellState.FLAG;
             result.setFlagPlaced(true);
         }
         return result;
@@ -109,7 +109,7 @@ public class Cell {
      * @return True if the cell has a flag.
      */
     public boolean isFlagged() {
-        return this.visualCellState == CellState.Flag;
+        return this.visualCellState == CellState.FLAG;
     }
 
     /**
@@ -126,18 +126,18 @@ public class Cell {
      */
     public String getStateSymbol() {
         return switch (this.visualCellState) {
-            case Unmined -> "██";
-            case Flag -> "⚐ ";
-            case MinedNone -> "  ";
-            case Mined1 -> "1 ";
-            case Mined2 -> "2 ";
-            case Mined3 -> "3 ";
-            case Mined4 -> "4 ";
-            case Mined5 -> "5 ";
-            case Mined6 -> "6 ";
-            case Mined7 -> "7 ";
-            case Mined8 -> "8 ";
-            case Mine -> "**";
+            case UNMINED -> "██";
+            case FLAG -> "⚐ ";
+            case MINED_NONE -> "  ";
+            case MINED_1 -> "1 ";
+            case MINED_2 -> "2 ";
+            case MINED_3 -> "3 ";
+            case MINED_4 -> "4 ";
+            case MINED_5 -> "5 ";
+            case MINED_6 -> "6 ";
+            case MINED_7 -> "7 ";
+            case MINED_8 -> "8 ";
+            case MINE -> "**";
             default -> "??";
         };
     }

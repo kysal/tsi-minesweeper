@@ -57,32 +57,32 @@ public class GameInput {
      */
     public static GameInput parseInput(String rawInput) {
         String[] inputArr = rawInput.split(" ");
-        if (inputArr.length != 2) return new GameInput(InputErrorType.CommandSyntax);
+        if (inputArr.length != 2) return new GameInput(InputErrorType.COMMAND_SYNTAX);
 
-        GameInput gi = new GameInput(InputErrorType.None);
+        GameInput gi = new GameInput(InputErrorType.NONE);
 
         // Set action
         gi.action = (switch (inputArr[0].toLowerCase()) {
-            case "open", "o" -> ActionType.Open;
-            case "flag", "f" -> ActionType.Flag;
-            default -> ActionType.Invalid;
+            case "open", "o" -> ActionType.OPEN;
+            case "flag", "f" -> ActionType.FLAG;
+            default -> ActionType.INVALID;
         });
         // If unknown command return error
-        if (gi.getAction() == ActionType.Invalid) return new GameInput(InputErrorType.UnknownCommand);
+        if (gi.getAction() == ActionType.INVALID) return new GameInput(InputErrorType.UNKNOWN_COMMAND);
         // If special chars used return error
         Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
         Matcher matcher = pattern.matcher(inputArr[1]);
-        if (matcher.find()) return new GameInput(InputErrorType.UnknownChar);
+        if (matcher.find()) return new GameInput(InputErrorType.UNKNOWN_CHAR);
 
         // If option contains no alphabet chars return error
-        if (inputArr[1].replaceAll("[^A-Za-z]", "").equals("")) return new GameInput(InputErrorType.RowIndexUndefined);
-        if (inputArr[1].replaceAll("[^A-Za-z]", "").length() > 6) return new GameInput(InputErrorType.RowIndexTooLarge);
+        if (inputArr[1].replaceAll("[^A-Za-z]", "").equals("")) return new GameInput(InputErrorType.ROW_INDEX_UNDEFINED);
+        if (inputArr[1].replaceAll("[^A-Za-z]", "").length() > 6) return new GameInput(InputErrorType.ROW_INDEX_TOO_LARGE);
             // Parse letter to row index value
         gi.row_idx = GameInput.parseLetterIndex((inputArr[1].replaceAll("[^A-Za-z]", "")));
 
         // If option contains no numbers return error
-        if (inputArr[1].replaceAll("[^0-9]", "").equals("")) return new GameInput(InputErrorType.ColIndexUndefined);
-        if (inputArr[1].replaceAll("[^0-9]", "").length() > 9) return new GameInput(InputErrorType.ColIndexTooLarge);
+        if (inputArr[1].replaceAll("[^0-9]", "").equals("")) return new GameInput(InputErrorType.COL_INDEX_UNDEFINED);
+        if (inputArr[1].replaceAll("[^0-9]", "").length() > 9) return new GameInput(InputErrorType.COL_INDEX_TOO_LARGE);
         // Parse number to row index
         gi.col_idx = Integer.parseInt(inputArr[1].replaceAll("[^0-9]", "")) -1;
 
@@ -118,7 +118,7 @@ public class GameInput {
      * @return True if the error type is None.
      */
     public boolean hasNoError() {
-        return error == InputErrorType.None;
+        return error == InputErrorType.NONE;
     }
 
     /**
