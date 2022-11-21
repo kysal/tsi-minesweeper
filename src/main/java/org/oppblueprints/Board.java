@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Board {
 
-    private final Cell[][] board;
+    private final Cell[][] boardArray;
     private final Difficulty difficulty;
     private boolean initialised;
 
@@ -17,19 +17,19 @@ public class Board {
 
         for (int i = 0; i < mines; i++) {
             // Randomly generate new co-ordinate for mine location
-            int row = random.nextInt(this.board.length);
-            int col = random.nextInt(this.board[0].length);
+            int row = random.nextInt(this.boardArray.length);
+            int col = random.nextInt(this.boardArray[0].length);
 
             // If mine location is already filled (previous mine or initial move blank space) move to next index location
             // Moves through board column first, resets to [0,0] is board end is reached until empty space found
-            while (this.board[row][col] != null) {
-                if (col == this.board[0].length-1) {
-                    if (row == this.board.length-1) row = 0;
+            while (this.boardArray[row][col] != null) {
+                if (col == this.boardArray[0].length-1) {
+                    if (row == this.boardArray.length-1) row = 0;
                     else row++;
                     col = 0;
                 } else col++;
             }
-            this.board[row][col] = new Cell(true);
+            this.boardArray[row][col] = new Cell(true);
         }
     }
 
@@ -52,17 +52,17 @@ public class Board {
                 {firstMoveRow-1, firstMoveCol-1}
         };
         for (int[] index: surroundingIndices) {
-            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
-            board[index[0]][index[1]] = new Cell(false);
+            if (index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1) continue;
+            boardArray[index[0]][index[1]] = new Cell(false);
         }
 
         // Add mines
         addMines(difficulty.mines());
 
         // Fill all remaining squares
-        for (int row = 0; row < this.board.length; row++) {
-            for (int col = 0; col < this.board[0].length; col++) {
-                if (this.board[row][col] == null) this.board[row][col] = new Cell();
+        for (int row = 0; row < this.boardArray.length; row++) {
+            for (int col = 0; col < this.boardArray[0].length; col++) {
+                if (this.boardArray[row][col] == null) this.boardArray[row][col] = new Cell();
             }
         }
 
@@ -74,7 +74,7 @@ public class Board {
      * @param opts The Difficulty record params containing the desired rows, columns and number of mines of the board.
      */
     public Board(Difficulty opts) {
-        this.board = new Cell[opts.rows()][opts.cols()];
+        this.boardArray = new Cell[opts.rows()][opts.cols()];
         this.difficulty = opts;
         this.initialised = false;
     }
@@ -89,8 +89,8 @@ public class Board {
         int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};
         int tilesOpened = 0;
         for (int[] index : surroundingIndices) {
-            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
-            if (board[index[0]][index[1]].isCleared()) continue;
+            if (index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1) continue;
+            if (boardArray[index[0]][index[1]].isCleared()) continue;
             GameResult result = action(new GameInput(index[0], index[1], ActionType.Open));
             tilesOpened += result.getTilesOpened();
         }
@@ -107,8 +107,8 @@ public class Board {
         int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};
         int mines = 0;
         for (int[] index : surroundingIndices) {
-            if (index[0] < 0 || index[1] < 0 || index[0] > board.length-1 || index[1] > board[0].length-1) continue;
-            if (board[index[0]][index[1]].hasMine()) mines++;
+            if (index[0] < 0 || index[1] < 0 || index[0] > boardArray.length-1 || index[1] > boardArray[0].length-1) continue;
+            if (boardArray[index[0]][index[1]].hasMine()) mines++;
         }
         return mines;
     }
@@ -121,7 +121,7 @@ public class Board {
     public GameResult action(GameInput input) {
 
         // If input index out of bounds
-        if (input.getRow_idx() < 0 || input.getRow_idx() > this.board.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.board[0].length-1)
+        if (input.getRow_idx() < 0 || input.getRow_idx() > this.boardArray.length-1 || input.getCol_idx() < 0 || input.getCol_idx() > this.boardArray[0].length-1)
             return new GameResult(ResultErrorType.InvalidIndex);
 
         // Input open command
@@ -134,14 +134,14 @@ public class Board {
             }
 
             // Return Error if tile already opened or flagged
-            if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
+            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ResultErrorType.AlreadyCleared);
-            if (this.board[input.getRow_idx()][input.getCol_idx()].isFlagged())
+            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isFlagged())
                 return new GameResult(ResultErrorType.Flagged);
 
             // GAME RESULT PRODUCED
             // Update visual and check if opened mine
-            GameResult result = this.board[input.getRow_idx()][input.getCol_idx()].reveal();
+            GameResult result = this.boardArray[input.getRow_idx()][input.getCol_idx()].reveal();
 
             if (result.isGameLost()) { revealAllMines(); return result;}
 //            result.setWon(hasWon());
@@ -157,7 +157,7 @@ public class Board {
             }
             else result.setTilesOpened(1);
 
-            this.board[input.getRow_idx()][input.getCol_idx()].setMineNumber(surroundingMines);
+            this.boardArray[input.getRow_idx()][input.getCol_idx()].setMineNumber(surroundingMines);
 
             return result;
 
@@ -166,11 +166,11 @@ public class Board {
             if (!initialised) return new GameResult(ResultErrorType.FlagFirstMove);
 
             // Return Error if tile already opened
-            if (this.board[input.getRow_idx()][input.getCol_idx()].isCleared())
+            if (this.boardArray[input.getRow_idx()][input.getCol_idx()].isCleared())
                 return new GameResult(ResultErrorType.AlreadyCleared);
 
             // Return game result from flag
-            return this.board[input.getRow_idx()][input.getCol_idx()].flag();
+            return this.boardArray[input.getRow_idx()][input.getCol_idx()].flag();
         }
 
         // Return error if no action
@@ -195,22 +195,22 @@ public class Board {
 
         // Top column
         sb.append(" |");
-        for (int col = 0; col < board[0].length; col++) {
+        for (int col = 0; col < boardArray[0].length; col++) {
             sb.append(String.format("%1$2s", col+1)).append("|");
         }
         sb.append(" \n").append(rowLine());
 
-        for (int row = 0; row < board.length; row++) {
+        for (int row = 0; row < boardArray.length; row++) {
             // Row title
             sb.append(getRowTitle(row)).append("|");
             // Cell states
 
             if (initialised) {
-                for (int col = 0; col < board[0].length; col++) {
-                    sb.append(board[row][col].getStateSymbol()).append("|");
+                for (int col = 0; col < boardArray[0].length; col++) {
+                    sb.append(boardArray[row][col].getStateSymbol()).append("|");
                 }
             } else {
-                for (int col = 0; col < board[0].length; col++) {
+                for (int col = 0; col < boardArray[0].length; col++) {
                     sb.append("██").append("|");
                 }
             }
@@ -227,7 +227,7 @@ public class Board {
      * @return A line of appropriate length to the number of columns.
      */
     private String rowLine() {
-        return ("-" + "+--".repeat(Math.max(0, board[0].length + 1))).substring(0, 2 + (board[0].length) * 3)+ "\n";
+        return ("-" + "+--".repeat(Math.max(0, boardArray[0].length + 1))).substring(0, 2 + (boardArray[0].length) * 3)+ "\n";
     }
 
     /**
@@ -236,7 +236,7 @@ public class Board {
      */
     private int mineCount() {
         int mines = 0;
-        for (Cell[] rows : this.board) {
+        for (Cell[] rows : this.boardArray) {
             for (Cell cell : rows) {
                 if (cell.hasMine()) mines++;
             }
@@ -251,7 +251,7 @@ public class Board {
      * @return The visual state icon of the cell at row col.
      */
     public String getCellSymbol(int row, int col) {
-        return board[row][col].getStateSymbol();
+        return boardArray[row][col].getStateSymbol();
     }
 
     /**
@@ -260,13 +260,13 @@ public class Board {
      * @param col Input row index.
      * @return The state of the cell at row col.
      */
-    public CellState getCellState(int row, int col) { return board[row][col].getState(); }
+    public CellState getCellState(int row, int col) { return boardArray[row][col].getState(); }
 
     /**
      * Called when game is lost, displays all mines as opened
      */
     public void revealAllMines() {
-        for (Cell[] row : board) {
+        for (Cell[] row : boardArray) {
             for (Cell cell : row) {
                 if (cell.hasMine()) cell.reveal();
             }
