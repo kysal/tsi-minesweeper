@@ -28,6 +28,31 @@ public class Game {
                 """);
     }
 
+    private void applyInput() {
+
+    }
+
+    private void handleInputError(GameInput input) {
+        switch (input.getError()) {
+            case UNKNOWN_CHAR -> System.out.println("Input Error: An unexpected character was found in input");
+            case COMMAND_SYNTAX -> System.out.println("Input Error: Error in command syntax. Try 'help'");
+            case ROW_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no alphabet characters and thus row could not be determined");
+            case COL_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no number characters and thus column could not be determined");
+            default -> System.out.println("Input Error: Error without message: " + input.getError());
+        }
+    }
+
+    private  void handleResultError(GameResult result) {
+        switch (result.getError()) {
+            case INVALID_INDEX -> System.out.println("Input Error: Out of Bounds");
+            case ALREADY_CLEARED -> System.out.println("Input Error: Tile already cleared");
+            case FLAGGED -> System.out.println("Result Error: Tile currently flagged");
+            case FLAG_FIRST_MOVE -> System.out.println("Result Error: You cannot use a flag on the first move");
+            default -> System.out.println("Result Error: Error with message: " + result.getError());
+        }
+    }
+
+
     /**
      * Asks for and handles each turn of the user's input.
      * @param difficulty A Difficulty record that sets the rows, columns and mine amount.
@@ -45,7 +70,7 @@ public class Game {
         };
 
         Scanner scanner = new Scanner(System.in);
-        timer.scheduleAtFixedRate(timerTask, 2000,1000);
+        timer.scheduleAtFixedRate(timerTask, 2000, 1000);
         cellsToOpen = (difficulty.rows() * difficulty.cols()) - difficulty.mines();
 
         // Game started
@@ -68,50 +93,38 @@ public class Game {
             // Convert scanner string to input object
             GameInput input = GameInput.parseInput(scannerInput);
 
-            if (input.hasNoError()) {
-                // Send input to board
-                GameResult result = this.board.action(input);
-                if (result.getError() == ResultErrorType.NONE) {
-                    if (result.isGameLost()) {
-                        timer.cancel();
-                        System.out.println(this.board.printBoard());
-                        System.out.println("Mine detected! You lose!");
+            if (!input.hasNoError()) {
+                handleInputError(input);
+                continue;
+            }
+            // Send input to board
+            GameResult result = this.board.action(input);
 
-                        System.out.print("Play again? (Y/N): ");
-                        return scanner.nextLine().equalsIgnoreCase("Y");
-                    } else if (input.action == ActionType.FLAG) {
-                        // Change flag variable when action taken
-                        if (result.isFlagPlaced()) flagsLeft--;
-                        else flagsLeft++;
-                    } else {
-                        cellsToOpen -= result.getTilesOpened();
-                        if (cellsToOpen <= 0) {
-                            timer.cancel();
-                            System.out.println("You win");
+            if (result.hasError()) {
+                handleResultError(result);
+                continue;
+            }
 
-                            System.out.print("Play again? (Y/N): ");
-                            return scanner.nextLine().equalsIgnoreCase("Y");
-                        }
 
-                    }
-                } else {
-                    // Handles Input and output error messages received from GameResult
-                    switch (result.getError()) {
-                        case INVALID_INDEX -> System.out.println("Input Error: Out of Bounds");
-                        case ALREADY_CLEARED -> System.out.println("Input Error: Tile already cleared");
-                        case FLAGGED -> System.out.println("Result Error: Tile currently flagged");
-                        case FLAG_FIRST_MOVE -> System.out.println("Result Error: You cannot use a flag on the first move");
-                        default -> System.out.println("Result Error: Error with message: " + result.getError());
-                    }
-                }
+            if (result.isGameLost()) {
+                timer.cancel();
+                System.out.println(this.board.printBoard());
+                System.out.println("Mine detected! You lose!");
+
+                System.out.print("Play again? (Y/N): ");
+                return scanner.nextLine().equalsIgnoreCase("Y");
+            } else if (input.action == ActionType.FLAG) {
+                // Change flag variable when action taken
+                if (result.isFlagPlaced()) flagsLeft--;
+                else flagsLeft++;
             } else {
-                // Handles Input Error messages received from GameInput
-                switch (input.getError()) {
-                    case UNKNOWN_CHAR -> System.out.println("Input Error: An unexpected character was found in input");
-                    case COMMAND_SYNTAX -> System.out.println("Input Error: Error in command syntax. Try 'help'");
-                    case ROW_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no alphabet characters and thus row could not be determined");
-                    case COL_INDEX_UNDEFINED -> System.out.println("Input Error: Your input contained no number characters and thus column could not be determined");
-                    default -> System.out.println("Input Error: Error without message: " + input.getError());
+                cellsToOpen -= result.getTilesOpened();
+                if (cellsToOpen <= 0) {
+                    timer.cancel();
+                    System.out.println("You win");
+
+                    System.out.print("Play again? (Y/N): ");
+                    return scanner.nextLine().equalsIgnoreCase("Y");
                 }
             }
         }

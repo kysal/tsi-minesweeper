@@ -70,4 +70,6 @@ public class GameResult {
     public void setFlagPlaced(boolean flagPlaced) {
         this.flagPlaced = flagPlaced;
     }
+
+    public boolean hasError() { return this.error != ResultErrorType.NONE; }
 }
