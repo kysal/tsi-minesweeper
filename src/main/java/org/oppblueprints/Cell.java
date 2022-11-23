@@ -79,6 +79,9 @@ public class Cell {
      * @return A GameResult object containing if the cell contained a mine and the game is lost.
      */
     public GameResult reveal() {
+        if (isFlagged()) return new GameResult(ResultErrorType.FLAGGED);
+        if (isCleared()) return new GameResult(ResultErrorType.ALREADY_CLEARED);
+
         isCleared = true;
         if (isMine) {
             this.visualCellState = CellState.MINE;

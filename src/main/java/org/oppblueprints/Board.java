@@ -265,4 +265,8 @@ public class Board {
             }
         }
     }
+
+    public Cell[][] getBoardArray() {
+        return boardArray;
+    }
 }
