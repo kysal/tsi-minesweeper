@@ -73,12 +73,12 @@ public class Board {
      * Note: All cells should be null on construction, board filled during first move.
      * @param opts The Difficulty record params containing the desired rows, columns and number of mines of the board.
      */
-<span class="nc" id="L76">    public Board(Difficulty opts) {</span>
-<span class="nc" id="L77">        this.boardArray = new Cell[opts.rows()][opts.cols()];</span>
-<span class="nc" id="L78">        this.difficulty = opts;</span>
-<span class="nc" id="L79">        this.initialised = false;</span>
-<span class="nc" id="L80">        random = new Random();</span>
-<span class="nc" id="L81">    }</span>
+<span class="fc" id="L76">    public Board(Difficulty opts) {</span>
+<span class="fc" id="L77">        this.boardArray = new Cell[opts.rows()][opts.cols()];</span>
+<span class="fc" id="L78">        this.difficulty = opts;</span>
+<span class="fc" id="L79">        this.initialised = false;</span>
+<span class="fc" id="L80">        random = new Random();</span>
+<span class="fc" id="L81">    }</span>
 
     /**
      * Returns the number of tiles opened during a recursive opening when the mine number is 0.
@@ -267,7 +267,7 @@ public class Board {
 <span class="nc" id="L267">    }</span>
 
     public Cell[][] getBoardArray() {
-<span class="nc" id="L270">        return boardArray;</span>
+<span class="fc" id="L270">        return boardArray;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

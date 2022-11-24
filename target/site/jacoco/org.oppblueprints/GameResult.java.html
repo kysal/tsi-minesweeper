@@ -10,25 +10,25 @@ public class GameResult {
      * Error constructor, contains an unfinished GameResult.
      * @param error Error type thrown.
      */
-<span class="nc" id="L13">    public GameResult(ResultErrorType error) {</span>
-<span class="nc" id="L14">        this.error = error;</span>
-<span class="nc" id="L15">    }</span>
+<span class="fc" id="L13">    public GameResult(ResultErrorType error) {</span>
+<span class="fc" id="L14">        this.error = error;</span>
+<span class="fc" id="L15">    }</span>
 
     /**
      * Default constructor.
      * @param lost The new lost state of the game.
      */
-<span class="nc" id="L21">    public GameResult(boolean lost) {</span>
-<span class="nc" id="L22">        this.error = ResultErrorType.NONE;</span>
-<span class="nc" id="L23">        this.lost = lost;</span>
-<span class="nc" id="L24">    }</span>
+<span class="fc" id="L21">    public GameResult(boolean lost) {</span>
+<span class="fc" id="L22">        this.error = ResultErrorType.NONE;</span>
+<span class="fc" id="L23">        this.lost = lost;</span>
+<span class="fc" id="L24">    }</span>
 
     /**
      * Returns the error type of the turn result.
      * @return the error type of the turn result.
      */
     public ResultErrorType getError() {
-<span class="nc" id="L31">        return error;</span>
+<span class="fc" id="L31">        return error;</span>
     }
 
     /**
@@ -36,7 +36,7 @@ public class GameResult {
      * @return The new lost state of the game.
      */
     public boolean isGameLost() {
-<span class="nc" id="L39">        return lost;</span>
+<span class="fc" id="L39">        return lost;</span>
     }
 
     /**
@@ -68,8 +68,8 @@ public class GameResult {
      * @param flagPlaced True to place a flag, false to remove.
      */
     public void setFlagPlaced(boolean flagPlaced) {
-<span class="nc" id="L71">        this.flagPlaced = flagPlaced;</span>
-<span class="nc" id="L72">    }</span>
+<span class="fc" id="L71">        this.flagPlaced = flagPlaced;</span>
+<span class="fc" id="L72">    }</span>
 
 <span class="nc bnc" id="L74" title="All 2 branches missed.">    public boolean hasError() { return this.error != ResultErrorType.NONE; }</span>
 }

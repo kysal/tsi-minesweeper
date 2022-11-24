@@ -5,38 +5,38 @@
  */
 public class Cell {
 
-<span class="nc" id="L8">    private CellState visualCellState = CellState.UNMINED;</span>
+<span class="fc" id="L8">    private CellState visualCellState = CellState.UNMINED;</span>
     private final boolean isMine;
-<span class="nc" id="L10">    private boolean isCleared = false;</span>
+<span class="fc" id="L10">    private boolean isCleared = false;</span>
 
     /**
      * Default constructor of a cell that doesn't have a mine.
      */
-<span class="nc" id="L15">    public Cell() {</span>
-<span class="nc" id="L16">        isMine = false;</span>
-<span class="nc" id="L17">    }</span>
+<span class="fc" id="L15">    public Cell() {</span>
+<span class="fc" id="L16">        isMine = false;</span>
+<span class="fc" id="L17">    }</span>
 
     /**
      * Constructor of cell where the mine state needs to be determined.
      * @param hasMine The mine state of the cell.
      */
-<span class="nc" id="L23">    public Cell(boolean hasMine) {</span>
-<span class="nc" id="L24">        isMine = hasMine;</span>
-<span class="nc" id="L25">    }</span>
+<span class="fc" id="L23">    public Cell(boolean hasMine) {</span>
+<span class="fc" id="L24">        isMine = hasMine;</span>
+<span class="fc" id="L25">    }</span>
 
     /**
      * Returns if the cell contains a mine.
      * @return True if the cell contains a mine.
      */
     public boolean hasMine() {
-<span class="nc" id="L32">        return isMine;</span>
+<span class="fc" id="L32">        return isMine;</span>
     }
 
     /**
      * Returns whether the cell has already been cleared.
      * @return True is the cell is cleared.
      */
-<span class="nc" id="L39">    public boolean isCleared() {return isCleared;}</span>
+<span class="fc" id="L39">    public boolean isCleared() {return isCleared;}</span>
 
     /**
      * Returns the visual cell state.
@@ -79,15 +79,15 @@ public class Cell {
      * @return A GameResult object containing if the cell contained a mine and the game is lost.
      */
     public GameResult reveal() {
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (isFlagged()) return new GameResult(ResultErrorType.FLAGGED);</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (isCleared()) return new GameResult(ResultErrorType.ALREADY_CLEARED);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (isFlagged()) return new GameResult(ResultErrorType.FLAGGED);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (isCleared()) return new GameResult(ResultErrorType.ALREADY_CLEARED);</span>
 
-<span class="nc" id="L85">        isCleared = true;</span>
-<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (isMine) {</span>
-<span class="nc" id="L87">            this.visualCellState = CellState.MINE;</span>
-<span class="nc" id="L88">            return new GameResult(true);</span>
+<span class="fc" id="L85">        isCleared = true;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (isMine) {</span>
+<span class="fc" id="L87">            this.visualCellState = CellState.MINE;</span>
+<span class="fc" id="L88">            return new GameResult(true);</span>
         }
-<span class="nc" id="L90">        return new GameResult(false);</span>
+<span class="fc" id="L90">        return new GameResult(false);</span>
     }
 
     /**
@@ -95,16 +95,16 @@ public class Cell {
      * @return A GameResult object containing if the cell flag was added or removed.
      */
     public GameResult flag() {
-<span class="nc" id="L98">        GameResult result = new GameResult(false);</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (this.visualCellState == CellState.FLAG) {</span>
-<span class="nc" id="L100">            this.visualCellState = CellState.UNMINED;</span>
-<span class="nc" id="L101">            result.setFlagPlaced(false);</span>
+<span class="fc" id="L98">        GameResult result = new GameResult(false);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (this.visualCellState == CellState.FLAG) {</span>
+<span class="fc" id="L100">            this.visualCellState = CellState.UNMINED;</span>
+<span class="fc" id="L101">            result.setFlagPlaced(false);</span>
         }
         else {
-<span class="nc" id="L104">            this.visualCellState = CellState.FLAG;</span>
-<span class="nc" id="L105">            result.setFlagPlaced(true);</span>
+<span class="fc" id="L104">            this.visualCellState = CellState.FLAG;</span>
+<span class="fc" id="L105">            result.setFlagPlaced(true);</span>
         }
-<span class="nc" id="L107">        return result;</span>
+<span class="fc" id="L107">        return result;</span>
     }
 
     /**
@@ -112,7 +112,7 @@ public class Cell {
      * @return True if the cell has a flag.
      */
     public boolean isFlagged() {
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        return this.visualCellState == CellState.FLAG;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        return this.visualCellState == CellState.FLAG;</span>
     }
 
     /**
