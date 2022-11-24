@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameInput.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">org.oppblueprints</a> &gt; <span class="el_source">GameInput.java</span></div><h1>GameInput.java</h1><pre class="source lang-java linenums">package org.oppblueprints;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class GameInput {
+
+    private int rowIdx;
+    private int colIdx;
+    ActionType action;
+    private InputErrorType error;
+
+    /**
+     * Error constructor, an unfinished input to note that an error has taken place and must be handled.
+     * @param error The error type that has occurred.
+     */
+<span class="nc" id="L17">    private GameInput(InputErrorType error) {</span>
+<span class="nc" id="L18">        this.error = error;</span>
+<span class="nc" id="L19">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L23">        return &quot;Action: &quot; + action + &quot;\nRow: &quot; + rowIdx + &quot;\nCol: &quot; + colIdx;</span>
+    }
+
+    /**
+     * Default constructor, assigns the basic attributes of a game move.
+     * @param row The row index where the action should happen.
+     * @param col The column index where the move should happen.
+     * @param action The action to take place at a given row column index.
+     */
+<span class="nc" id="L32">    public GameInput(int row, int col, ActionType action) {</span>
+<span class="nc" id="L33">        this.rowIdx = row;</span>
+<span class="nc" id="L34">        this.colIdx = col;</span>
+<span class="nc" id="L35">        this.action = action;</span>
+<span class="nc" id="L36">    }</span>
+
+    /**
+     * Parses the row alphabetic character into a row index
+     * @param rawString The letters inputted by the user
+     * @return The row index
+     */
+    private static int parseLetterIndex(String rawString) {
+<span class="nc" id="L44">        String alphabet = &quot;0ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;;</span>
+<span class="nc" id="L45">        int index = 0;</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        for (char c : rawString.toUpperCase().toCharArray()) {</span>
+<span class="nc" id="L47">            index = index * 26 + alphabet.indexOf(c);</span>
+        }
+<span class="nc" id="L49">        return index-1;</span>
+    }
+
+    /**
+     * Takes a raw string and parses it to a GameInput object.
+     * String must be made up of two words: an action and co-ordinates represented as an alphabetic character and a number
+     * @param rawInput The raw input string from the user.
+     * @return A GameInput object usable for board actions.
+     */
+    public static GameInput parseInput(String rawInput) {
+<span class="nc" id="L59">        String[] inputArr = rawInput.split(&quot; &quot;);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (inputArr.length != 2) return new GameInput(InputErrorType.COMMAND_SYNTAX);</span>
+
+<span class="nc" id="L62">        GameInput gi = new GameInput(InputErrorType.NONE);</span>
+
+        // Set action
+<span class="nc bnc" id="L65" title="All 3 branches missed.">        gi.action = (switch (inputArr[0].toLowerCase()) {</span>
+<span class="nc" id="L66">            case &quot;open&quot;, &quot;o&quot; -&gt; ActionType.OPEN;</span>
+<span class="nc" id="L67">            case &quot;flag&quot;, &quot;f&quot; -&gt; ActionType.FLAG;</span>
+<span class="nc" id="L68">            default -&gt; ActionType.INVALID;</span>
+        });
+        // If unknown command return error
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (gi.getAction() == ActionType.INVALID) return new GameInput(InputErrorType.UNKNOWN_COMMAND);</span>
+        // If special chars used return error
+<span class="nc" id="L73">        Pattern pattern = Pattern.compile(&quot;[^A-Za-z0-9]&quot;);</span>
+<span class="nc" id="L74">        Matcher matcher = pattern.matcher(inputArr[1]);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (matcher.find()) return new GameInput(InputErrorType.UNKNOWN_CHAR);</span>
+
+        // If option contains no alphabet chars return error
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (inputArr[1].replaceAll(&quot;[^A-Za-z]&quot;, &quot;&quot;).equals(&quot;&quot;)) return new GameInput(InputErrorType.ROW_INDEX_UNDEFINED);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (inputArr[1].replaceAll(&quot;[^A-Za-z]&quot;, &quot;&quot;).length() &gt; 6) return new GameInput(InputErrorType.ROW_INDEX_TOO_LARGE);</span>
+            // Parse letter to row index value
+<span class="nc" id="L81">        gi.rowIdx = GameInput.parseLetterIndex((inputArr[1].replaceAll(&quot;[^A-Za-z]&quot;, &quot;&quot;)));</span>
+
+        // If option contains no numbers return error
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (inputArr[1].replaceAll(&quot;\\D&quot;, &quot;&quot;).equals(&quot;&quot;)) return new GameInput(InputErrorType.COL_INDEX_UNDEFINED);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (inputArr[1].replaceAll(&quot;\\D&quot;, &quot;&quot;).length() &gt; 9) return new GameInput(InputErrorType.COL_INDEX_TOO_LARGE);</span>
+        // Parse number to row index
+<span class="nc" id="L87">        gi.colIdx = Integer.parseInt(inputArr[1].replaceAll(&quot;\\D&quot;, &quot;&quot;)) -1;</span>
+
+<span class="nc" id="L89">        return gi;</span>
+    }
+
+    /**
+     * Returns the action type of the input.
+     * @return The action type of the input.
+     */
+    public ActionType getAction() {
+<span class="nc" id="L97">        return action;</span>
+    }
+
+    /**
+     * Returns the row index of the input move.
+     * @return The row index of the input move.
+     */
+    public int getRowIdx() {
+<span class="nc" id="L105">        return rowIdx;</span>
+    }
+
+    /**
+     * Returns the column index of the input move.
+     * @return The column index of the input move.
+     */
+    public int getColIdx() {
+<span class="nc" id="L113">        return colIdx;</span>
+    }
+
+    /**
+     * Returns true if the input has no errors currently and is usable.
+     * @return True if the error type is None.
+     */
+    public boolean hasNoError() {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        return error == InputErrorType.NONE;</span>
+    }
+
+    /**
+     * Returns the current error type of the input.
+     * @return The current error type of the input.
+     */
+    public InputErrorType getError() {
+<span class="nc" id="L129">        return error;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

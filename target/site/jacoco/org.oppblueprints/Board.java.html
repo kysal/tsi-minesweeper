@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">org.oppblueprints</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package org.oppblueprints;
+
+import java.util.Random;
+
+public class Board {
+
+    private final Cell[][] boardArray;
+    private final Difficulty difficulty;
+    private boolean initialised;
+    private Random random;
+
+    /**
+     * Places a given number of cells into board as mines.
+     * @param mines number of mines to be placed.
+     */
+    private void addMines(int mines) {
+
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        for (int i = 0; i &lt; mines; i++) {</span>
+            // Randomly generate new co-ordinate for mine location
+<span class="nc" id="L20">            int row = random.nextInt(this.boardArray.length);</span>
+<span class="nc" id="L21">            int col = random.nextInt(this.boardArray[0].length);</span>
+
+            // If mine location is already filled (previous mine or initial move blank space) move to next index location
+            // Moves through board column first, resets to [0,0] is board end is reached until empty space found
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            while (this.boardArray[row][col] != null) {</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                if (col == this.boardArray[0].length-1) {</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">                    if (row == this.boardArray.length-1) row = 0;</span>
+<span class="nc" id="L28">                    else row++;</span>
+<span class="nc" id="L29">                    col = 0;</span>
+<span class="nc" id="L30">                } else col++;</span>
+            }
+<span class="nc" id="L32">            this.boardArray[row][col] = new Cell(true);</span>
+        }
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * Fills board Cell[][] with Cell objects.
+     * @param firstMoveRow Row index of the first move.
+     * @param firstMoveCol Column index of the first move.
+     */
+    private void generateBoard(int firstMoveRow, int firstMoveCol) {
+        // Make first move an empty
+<span class="nc" id="L43">        int[][] surroundingIndices = {</span>
+                {firstMoveRow  , firstMoveCol  },
+                {firstMoveRow+1, firstMoveCol  },
+                {firstMoveRow-1, firstMoveCol  },
+                {firstMoveRow  , firstMoveCol+1},
+                {firstMoveRow  , firstMoveCol-1},
+                {firstMoveRow+1, firstMoveCol+1},
+                {firstMoveRow+1, firstMoveCol-1},
+                {firstMoveRow-1, firstMoveCol+1},
+                {firstMoveRow-1, firstMoveCol-1}
+        };
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        for (int[] index: surroundingIndices) {</span>
+<span class="nc bnc" id="L55" title="All 8 branches missed.">            if (index[0] &lt; 0 || index[1] &lt; 0 || index[0] &gt; boardArray.length-1 || index[1] &gt; boardArray[0].length-1) continue;</span>
+<span class="nc" id="L56">            boardArray[index[0]][index[1]] = new Cell(false);</span>
+        }
+
+        // Add mines
+<span class="nc" id="L60">        addMines(difficulty.mines());</span>
+
+        // Fill all remaining squares
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        for (int row = 0; row &lt; this.boardArray.length; row++) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            for (int col = 0; col &lt; this.boardArray[0].length; col++) {</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                if (this.boardArray[row][col] == null) this.boardArray[row][col] = new Cell();</span>
+            }
+        }
+
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Default constructor.
+     * Note: All cells should be null on construction, board filled during first move.
+     * @param opts The Difficulty record params containing the desired rows, columns and number of mines of the board.
+     */
+<span class="nc" id="L76">    public Board(Difficulty opts) {</span>
+<span class="nc" id="L77">        this.boardArray = new Cell[opts.rows()][opts.cols()];</span>
+<span class="nc" id="L78">        this.difficulty = opts;</span>
+<span class="nc" id="L79">        this.initialised = false;</span>
+<span class="nc" id="L80">        random = new Random();</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * Returns the number of tiles opened during a recursive opening when the mine number is 0.
+     * @param row Row index of the players move.
+     * @param col Column index of the player move.
+     * @return The number of tiles opened during recursive opening.
+     */
+    private int autoOpen(int row, int col) {
+<span class="nc" id="L90">        int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};</span>
+<span class="nc" id="L91">        int tilesOpened = 0;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        for (int[] index : surroundingIndices) {</span>
+<span class="nc bnc" id="L93" title="All 8 branches missed.">            if ((index[0] &lt; 0 || index[1] &lt; 0 || index[0] &gt; boardArray.length-1 || index[1] &gt; boardArray[0].length-1)</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                    || boardArray[index[0]][index[1]].isCleared()) continue;</span>
+<span class="nc" id="L95">            GameResult result = action(new GameInput(index[0], index[1], ActionType.OPEN));</span>
+<span class="nc" id="L96">            tilesOpened += result.getTilesOpened();</span>
+        }
+<span class="nc" id="L98">        return tilesOpened;</span>
+    }
+
+    /**
+     * Returns the number of mines in the 8 surrounding tiles of a select tile index.
+     * @param row Row index of the players move.
+     * @param col Column index of the player move.
+     * @return Number of mines in the 8 surrounding tiles.
+     */
+    private int getSurroundingMines(int row, int col) {
+<span class="nc" id="L108">        int[][] surroundingIndices = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}, {row+1, col+1}, {row+1, col-1}, {row-1, col+1}, {row-1, col-1}};</span>
+<span class="nc" id="L109">        int mines = 0;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (int[] index : surroundingIndices) {</span>
+<span class="nc bnc" id="L111" title="All 8 branches missed.">            if (index[0] &lt; 0 || index[1] &lt; 0 || index[0] &gt; boardArray.length-1 || index[1] &gt; boardArray[0].length-1) continue;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (boardArray[index[0]][index[1]].hasMine()) mines++;</span>
+        }
+<span class="nc" id="L114">        return mines;</span>
+    }
+
+    private GameResult openCell(GameInput input) {
+
+        // Init board before first action
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (!initialised) {</span>
+<span class="nc" id="L121">            generateBoard(input.getRowIdx(), input.getColIdx());</span>
+<span class="nc" id="L122">            initialised = true;</span>
+        }
+
+        // Return Error if tile already opened or flagged
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isCleared())</span>
+<span class="nc" id="L127">            return new GameResult(ResultErrorType.ALREADY_CLEARED);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isFlagged())</span>
+<span class="nc" id="L129">            return new GameResult(ResultErrorType.FLAGGED);</span>
+
+        // GAME RESULT PRODUCED
+        // Update visual and check if opened mine
+<span class="nc" id="L133">        GameResult result = this.boardArray[input.getRowIdx()][input.getColIdx()].reveal();</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (result.isGameLost()) { revealAllMines(); return result;}</span>
+
+        // If not mine, check surrounding tiles for mines to produce tile number
+<span class="nc" id="L138">        int surroundingMines = getSurroundingMines(input.getRowIdx(), input.getColIdx());</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (surroundingMines == 0) {</span>
+            try {
+<span class="nc" id="L141">                result.setTilesOpened(autoOpen(input.getRowIdx(), input.getColIdx())+1);</span>
+<span class="nc" id="L142">            } catch (StackOverflowError e) {</span>
+<span class="nc" id="L143">                System.err.println(&quot;Stack Overflow Occurred&quot;);</span>
+<span class="nc" id="L144">            }</span>
+        }
+<span class="nc" id="L146">        else result.setTilesOpened(1);</span>
+
+<span class="nc" id="L148">        this.boardArray[input.getRowIdx()][input.getColIdx()].setMineNumber(surroundingMines);</span>
+
+<span class="nc" id="L150">        return result;</span>
+    }
+
+    private GameResult flagCell(GameInput input) {
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (!initialised) return new GameResult(ResultErrorType.FLAG_FIRST_MOVE);</span>
+
+        // Return Error if tile already opened
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (this.boardArray[input.getRowIdx()][input.getColIdx()].isCleared())</span>
+<span class="nc" id="L158">            return new GameResult(ResultErrorType.ALREADY_CLEARED);</span>
+
+        // Return game result from flag
+<span class="nc" id="L161">        return this.boardArray[input.getRowIdx()][input.getColIdx()].flag();</span>
+    }
+
+    /**
+     * Performs the input action on the board.
+     * @param input An GameInput object containing the game action desired and the row and col index where it should happen.
+     * @return GameResult informing success and win/loss state.
+     */
+    public GameResult action(GameInput input) {
+
+        // If input index out of bounds
+<span class="nc bnc" id="L172" title="All 8 branches missed.">        if (input.getRowIdx() &lt; 0 || input.getRowIdx() &gt; this.boardArray.length-1 || input.getColIdx() &lt; 0 || input.getColIdx() &gt; this.boardArray[0].length-1)</span>
+<span class="nc" id="L173">            return new GameResult(ResultErrorType.INVALID_INDEX);</span>
+
+        // Input open command
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (input.action == ActionType.OPEN) {</span>
+<span class="nc" id="L177">            return openCell(input);</span>
+        // Input flag command
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        } else if (input.action == ActionType.FLAG) {</span>
+<span class="nc" id="L180">            return flagCell(input);</span>
+        }
+
+        // Return error if no action
+<span class="nc" id="L184">        return new GameResult(ResultErrorType.NO_ACTION);</span>
+    }
+
+    /**
+     * Takes in a row index and returns row title Eg. A = 0; B = 1; AA = 27; AB = 28;
+     * @param index The number to convert into an alphabetic char string
+     * @return The char string corresponding to the index number
+     */
+    private String getRowTitle(int index) {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        return index &lt; 0 ? &quot;&quot; : getRowTitle((index / 26) - 1) + (char)(65 + index %26);</span>
+    }
+
+    /**
+     * Gets visual representation of current board state.
+     * @return String representation of the current board state.
+    */
+    public String printBoard() {
+<span class="nc" id="L201">        StringBuilder sb = new StringBuilder();</span>
+
+        // Top column
+<span class="nc" id="L204">        sb.append(&quot; |&quot;);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        for (int col = 0; col &lt; boardArray[0].length; col++) {</span>
+<span class="nc" id="L206">            sb.append(String.format(&quot;%1$2s&quot;, col+1)).append(&quot;|&quot;);</span>
+        }
+<span class="nc" id="L208">        sb.append(&quot; \n&quot;).append(rowLine());</span>
+
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        for (int row = 0; row &lt; boardArray.length; row++) {</span>
+            // Row title
+<span class="nc" id="L212">            sb.append(getRowTitle(row)).append(&quot;|&quot;);</span>
+            // Cell states
+
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            if (initialised) {</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                for (int col = 0; col &lt; boardArray[0].length; col++) {</span>
+<span class="nc" id="L217">                    sb.append(boardArray[row][col].getStateSymbol()).append(&quot;|&quot;);</span>
+                }
+            } else {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                for (int col = 0; col &lt; boardArray[0].length; col++) {</span>
+<span class="nc" id="L221">                    sb.append(&quot;██&quot;).append(&quot;|&quot;);</span>
+                }
+            }
+
+<span class="nc" id="L225">            sb.append(&quot; \n&quot;);</span>
+<span class="nc" id="L226">            sb.append(rowLine());</span>
+        }
+
+<span class="nc" id="L229">        return sb.toString();</span>
+    }
+
+    /**
+     * Generates a representation of a full line for the board table printBoard() method.
+     * @return A line of appropriate length to the number of columns.
+     */
+    private String rowLine() {
+<span class="nc" id="L237">        return (&quot;-&quot; + &quot;+--&quot;.repeat(Math.max(0, boardArray[0].length + 1))).substring(0, 2 + (boardArray[0].length) * 3)+ &quot;\n&quot;;</span>
+    }
+
+    /**
+     * Returns the visual cell state icon of a particular cell on the board.
+     * @param row Input row index.
+     * @param col Input row index.
+     * @return The visual state icon of the cell at row col.
+     */
+    public String getCellSymbol(int row, int col) {
+<span class="nc" id="L247">        return boardArray[row][col].getStateSymbol();</span>
+    }
+
+    /**
+     * Returns the cell state of a particular cell on the board.
+     * @param row Input row index.
+     * @param col Input row index.
+     * @return The state of the cell at row col.
+     */
+<span class="nc" id="L256">    public CellState getCellState(int row, int col) { return boardArray[row][col].getState(); }</span>
+
+    /**
+     * Called when game is lost, displays all mines as opened
+     */
+    public void revealAllMines() {
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        for (Cell[] row : boardArray) {</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            for (Cell cell : row) {</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">                if (cell.hasMine()) cell.reveal();</span>
+            }
+        }
+<span class="nc" id="L267">    }</span>
+
+    public Cell[][] getBoardArray() {
+<span class="nc" id="L270">        return boardArray;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

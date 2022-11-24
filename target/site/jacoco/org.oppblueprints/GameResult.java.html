@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">org.oppblueprints</a> &gt; <span class="el_source">GameResult.java</span></div><h1>GameResult.java</h1><pre class="source lang-java linenums">package org.oppblueprints;
+
+public class GameResult {
+    private ResultErrorType error;
+    private boolean lost;
+    private boolean flagPlaced;
+    private int tilesOpened;
+
+    /**
+     * Error constructor, contains an unfinished GameResult.
+     * @param error Error type thrown.
+     */
+<span class="nc" id="L13">    public GameResult(ResultErrorType error) {</span>
+<span class="nc" id="L14">        this.error = error;</span>
+<span class="nc" id="L15">    }</span>
+
+    /**
+     * Default constructor.
+     * @param lost The new lost state of the game.
+     */
+<span class="nc" id="L21">    public GameResult(boolean lost) {</span>
+<span class="nc" id="L22">        this.error = ResultErrorType.NONE;</span>
+<span class="nc" id="L23">        this.lost = lost;</span>
+<span class="nc" id="L24">    }</span>
+
+    /**
+     * Returns the error type of the turn result.
+     * @return the error type of the turn result.
+     */
+    public ResultErrorType getError() {
+<span class="nc" id="L31">        return error;</span>
+    }
+
+    /**
+     * Returns true if the input has resulted in losing the game.
+     * @return The new lost state of the game.
+     */
+    public boolean isGameLost() {
+<span class="nc" id="L39">        return lost;</span>
+    }
+
+    /**
+     * Returns the number of tiles opened during a turn.
+     * @return The number of tiles opened during a turn.
+     */
+    public int getTilesOpened() {
+<span class="nc" id="L47">        return tilesOpened;</span>
+    }
+
+    /**
+     * Sets the number of tiles opened during a turn.
+     * @param tilesOpened The number of tiles opened during a turn.
+     */
+    public void setTilesOpened(int tilesOpened) {
+<span class="nc" id="L55">        this.tilesOpened = tilesOpened;</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Returns true if a flag is currently on the tile.
+     * @return the state of a flag currently being on the tile.
+     */
+    public boolean isFlagPlaced() {
+<span class="nc" id="L63">        return flagPlaced;</span>
+    }
+
+    /**
+     * Places or removes a flag from the tile.
+     * @param flagPlaced True to place a flag, false to remove.
+     */
+    public void setFlagPlaced(boolean flagPlaced) {
+<span class="nc" id="L71">        this.flagPlaced = flagPlaced;</span>
+<span class="nc" id="L72">    }</span>
+
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    public boolean hasError() { return this.error != ResultErrorType.NONE; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

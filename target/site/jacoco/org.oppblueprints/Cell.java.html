@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cell.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">org.oppblueprints</a> &gt; <span class="el_source">Cell.java</span></div><h1>Cell.java</h1><pre class="source lang-java linenums">package org.oppblueprints;
+
+/**
+ * The Cell class represents a single tile on a board of minesweeper. It can contain a mine, and can be revealed and subsequently clears.
+ */
+public class Cell {
+
+<span class="nc" id="L8">    private CellState visualCellState = CellState.UNMINED;</span>
+    private final boolean isMine;
+<span class="nc" id="L10">    private boolean isCleared = false;</span>
+
+    /**
+     * Default constructor of a cell that doesn't have a mine.
+     */
+<span class="nc" id="L15">    public Cell() {</span>
+<span class="nc" id="L16">        isMine = false;</span>
+<span class="nc" id="L17">    }</span>
+
+    /**
+     * Constructor of cell where the mine state needs to be determined.
+     * @param hasMine The mine state of the cell.
+     */
+<span class="nc" id="L23">    public Cell(boolean hasMine) {</span>
+<span class="nc" id="L24">        isMine = hasMine;</span>
+<span class="nc" id="L25">    }</span>
+
+    /**
+     * Returns if the cell contains a mine.
+     * @return True if the cell contains a mine.
+     */
+    public boolean hasMine() {
+<span class="nc" id="L32">        return isMine;</span>
+    }
+
+    /**
+     * Returns whether the cell has already been cleared.
+     * @return True is the cell is cleared.
+     */
+<span class="nc" id="L39">    public boolean isCleared() {return isCleared;}</span>
+
+    /**
+     * Returns the visual cell state.
+     * @return The visual cell state.
+     */
+    public CellState getState() {
+<span class="nc" id="L46">        return visualCellState;</span>
+    }
+
+    /**
+     * Sets the state of the Cell.
+     * @param state The new state of the cell.
+     */
+    public void setState(CellState state) {
+<span class="nc" id="L54">        this.visualCellState = state;</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Sets the state of the cell to how many mines surround it.
+     * @param mines The number of mines surround the cell.
+     */
+    public void setMineNumber(int mines) {
+<span class="nc bnc" id="L62" title="All 10 branches missed.">        this.setState(switch (mines) {</span>
+<span class="nc" id="L63">            case 0 -&gt; CellState.MINED_NONE;</span>
+<span class="nc" id="L64">            case 1 -&gt; CellState.MINED_1;</span>
+<span class="nc" id="L65">            case 2 -&gt; CellState.MINED_2;</span>
+<span class="nc" id="L66">            case 3 -&gt; CellState.MINED_3;</span>
+<span class="nc" id="L67">            case 4 -&gt; CellState.MINED_4;</span>
+<span class="nc" id="L68">            case 5 -&gt; CellState.MINED_5;</span>
+<span class="nc" id="L69">            case 6 -&gt; CellState.MINED_6;</span>
+<span class="nc" id="L70">            case 7 -&gt; CellState.MINED_7;</span>
+<span class="nc" id="L71">            case 8 -&gt; CellState.MINED_8;</span>
+<span class="nc" id="L72">            default -&gt; CellState.UNMINED;</span>
+
+        });
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Reveals if the cell has a bomb or not and sets it to cleared.
+     * @return A GameResult object containing if the cell contained a mine and the game is lost.
+     */
+    public GameResult reveal() {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (isFlagged()) return new GameResult(ResultErrorType.FLAGGED);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (isCleared()) return new GameResult(ResultErrorType.ALREADY_CLEARED);</span>
+
+<span class="nc" id="L85">        isCleared = true;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (isMine) {</span>
+<span class="nc" id="L87">            this.visualCellState = CellState.MINE;</span>
+<span class="nc" id="L88">            return new GameResult(true);</span>
+        }
+<span class="nc" id="L90">        return new GameResult(false);</span>
+    }
+
+    /**
+     * Sets an unflagged cell to flagged and a flagged cell to unflagged.
+     * @return A GameResult object containing if the cell flag was added or removed.
+     */
+    public GameResult flag() {
+<span class="nc" id="L98">        GameResult result = new GameResult(false);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (this.visualCellState == CellState.FLAG) {</span>
+<span class="nc" id="L100">            this.visualCellState = CellState.UNMINED;</span>
+<span class="nc" id="L101">            result.setFlagPlaced(false);</span>
+        }
+        else {
+<span class="nc" id="L104">            this.visualCellState = CellState.FLAG;</span>
+<span class="nc" id="L105">            result.setFlagPlaced(true);</span>
+        }
+<span class="nc" id="L107">        return result;</span>
+    }
+
+    /**
+     * Checks if the cell currently has a flag on it.
+     * @return True if the cell has a flag.
+     */
+    public boolean isFlagged() {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        return this.visualCellState == CellState.FLAG;</span>
+    }
+
+    /**
+     * Checks if a cell is in the correct state for a win.
+     * @return True if the cell contains a mine or.
+     */
+    public boolean isFlaggedCorrectly() {
+<span class="nc bnc" id="L123" title="All 6 branches missed.">        return (hasMine()) || (isCleared &amp;&amp; !hasMine());</span>
+    }
+
+    /**
+     * Returns the symbol associated with a given cell state the cell is.
+     * @return A string to be shown to visually represent this cell's state.
+     */
+    public String getStateSymbol() {
+<span class="nc bnc" id="L131" title="All 13 branches missed.">        return switch (this.visualCellState) {</span>
+<span class="nc" id="L132">            case UNMINED -&gt; &quot;██&quot;;</span>
+<span class="nc" id="L133">            case FLAG -&gt; &quot;⚐ &quot;;</span>
+<span class="nc" id="L134">            case MINED_NONE -&gt; &quot;  &quot;;</span>
+<span class="nc" id="L135">            case MINED_1 -&gt; &quot;1 &quot;;</span>
+<span class="nc" id="L136">            case MINED_2 -&gt; &quot;2 &quot;;</span>
+<span class="nc" id="L137">            case MINED_3 -&gt; &quot;3 &quot;;</span>
+<span class="nc" id="L138">            case MINED_4 -&gt; &quot;4 &quot;;</span>
+<span class="nc" id="L139">            case MINED_5 -&gt; &quot;5 &quot;;</span>
+<span class="nc" id="L140">            case MINED_6 -&gt; &quot;6 &quot;;</span>
+<span class="nc" id="L141">            case MINED_7 -&gt; &quot;7 &quot;;</span>
+<span class="nc" id="L142">            case MINED_8 -&gt; &quot;8 &quot;;</span>
+<span class="nc" id="L143">            case MINE -&gt; &quot;**&quot;;</span>
+<span class="nc" id="L144">            default -&gt; &quot;??&quot;;</span>
+        };
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

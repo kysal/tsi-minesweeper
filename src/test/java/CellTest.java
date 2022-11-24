@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.oppblueprints.Cell;
-import org.oppblueprints.Game;
 import org.oppblueprints.GameResult;
 import org.oppblueprints.ResultErrorType;
 
